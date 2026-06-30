@@ -1,0 +1,740 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>稟文書寫</title>
+<meta name="theme-color" content="#7a1f1f">
+<link rel="manifest" href="./manifest.json">
+<link rel="icon" href="./icons/icon-192.png">
+<link rel="apple-touch-icon" href="./icons/icon-192.png">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;500;600;700;900&family=Noto+Sans+TC:wght@400;500;600&display=swap');
+
+  :root{
+    --paper: #f3ead9;
+    --paper-deep: #e9dcc2;
+    --ink: #2b2420;
+    --ink-soft: #5b5045;
+    --seal: #8e2a23;
+    --seal-deep: #6e1d18;
+    --gold: #a87b35;
+    --line: #c9b693;
+    --ok: #4c6b4f;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    min-height:100vh;
+    background:
+      radial-gradient(ellipse at top, rgba(168,123,53,0.10), transparent 60%),
+      var(--paper);
+    background-attachment:fixed;
+    font-family:'Noto Sans TC', sans-serif;
+    color:var(--ink);
+    padding:28px 16px 64px;
+    position:relative;
+  }
+  body::before{
+    content:"";
+    position:fixed;
+    inset:0;
+    pointer-events:none;
+    opacity:0.5;
+    background-image:
+      repeating-linear-gradient(0deg, rgba(0,0,0,0.012) 0px, rgba(0,0,0,0.012) 1px, transparent 1px, transparent 3px);
+  }
+
+  .sheet{
+    max-width:560px;
+    margin:0 auto;
+    position:relative;
+  }
+
+  header{
+    text-align:center;
+    margin-bottom:28px;
+    padding-bottom:18px;
+    border-bottom:1px solid var(--line);
+    position:relative;
+  }
+  header .eyebrow{
+    font-size:11px;
+    letter-spacing:0.35em;
+    color:var(--gold);
+    font-weight:600;
+    margin-bottom:6px;
+  }
+  header h1{
+    font-family:'Noto Serif TC', serif;
+    font-weight:900;
+    font-size:30px;
+    letter-spacing:0.18em;
+    margin:0;
+    color:var(--seal-deep);
+    writing-mode: horizontal-tb;
+  }
+  header .sub{
+    margin-top:8px;
+    font-size:12.5px;
+    color:var(--ink-soft);
+    letter-spacing:0.05em;
+  }
+
+  .card{
+    background:linear-gradient(180deg, rgba(255,255,255,0.35), rgba(255,255,255,0.08));
+    border:1px solid var(--line);
+    border-radius:4px;
+    padding:22px 20px;
+    margin-bottom:18px;
+    box-shadow:0 1px 0 rgba(255,255,255,0.6) inset, 0 8px 20px -14px rgba(43,36,32,0.4);
+  }
+
+  .field{margin-bottom:18px;}
+  .field:last-child{margin-bottom:0;}
+  label.field-label{
+    display:block;
+    font-size:13px;
+    font-weight:600;
+    color:var(--seal-deep);
+    margin-bottom:8px;
+    letter-spacing:0.08em;
+  }
+  label.field-label .req{
+    color:var(--seal);
+    margin-left:2px;
+    font-weight:700;
+  }
+
+  input[type="text"], select{
+    width:100%;
+    padding:11px 12px;
+    font-size:16px;
+    font-family:inherit;
+    border:1px solid var(--line);
+    border-radius:3px;
+    background:#fdfaf3;
+    color:var(--ink);
+    outline:none;
+    transition:border-color .15s, box-shadow .15s;
+    -webkit-appearance:none;
+    appearance:none;
+  }
+  input[type="text"]:focus, select:focus{
+    border-color:var(--seal);
+    box-shadow:0 0 0 3px rgba(142,42,35,0.12);
+  }
+  input.err, select.err{
+    border-color:var(--seal);
+    background:#fdf2f0;
+  }
+
+  .gender-row{display:flex; gap:10px;}
+  .gender-btn{
+    flex:1;
+    padding:11px 0;
+    text-align:center;
+    border:1px solid var(--line);
+    border-radius:3px;
+    background:#fdfaf3;
+    cursor:pointer;
+    font-size:15px;
+    font-weight:600;
+    color:var(--ink-soft);
+    user-select:none;
+    transition:all .15s;
+  }
+  .gender-btn.active{
+    background:var(--seal);
+    border-color:var(--seal-deep);
+    color:#fdf3ea;
+  }
+  .gender-btn:active{transform:scale(0.98);}
+
+  .date-row{display:flex; gap:8px;}
+  .date-row .field-wrap{flex:1;}
+  .date-row .unit{
+    display:block;
+    text-align:center;
+    font-size:11px;
+    color:var(--ink-soft);
+    margin-top:4px;
+  }
+
+  .lunar-preview{
+    margin-top:12px;
+    padding:10px 14px;
+    background:rgba(142,42,35,0.06);
+    border:1px dashed var(--line);
+    border-radius:3px;
+    font-size:14px;
+    color:var(--seal-deep);
+    font-family:'Noto Serif TC', serif;
+    font-weight:600;
+    letter-spacing:0.04em;
+    min-height:20px;
+  }
+  .lunar-preview.placeholder{
+    color:var(--ink-soft);
+    font-family:inherit;
+    font-weight:400;
+    font-size:12.5px;
+  }
+
+  .check-grid{
+    display:grid;
+    grid-template-columns:repeat(4, 1fr);
+    gap:8px;
+  }
+  .chk{
+    position:relative;
+    text-align:center;
+    padding:10px 2px;
+    border:1px solid var(--line);
+    border-radius:3px;
+    background:#fdfaf3;
+    font-size:14.5px;
+    font-weight:500;
+    color:var(--ink);
+    cursor:pointer;
+    user-select:none;
+    transition:all .15s;
+  }
+  .chk.set-main{
+    grid-column:span 2;
+    background:linear-gradient(180deg, #fbf2df, #f3e3c2);
+    font-weight:700;
+    color:var(--gold);
+    border-color:var(--gold);
+  }
+  .chk.checked{
+    background:var(--seal);
+    border-color:var(--seal-deep);
+    color:#fdf3ea;
+  }
+  .chk.set-main.checked{
+    background:var(--gold);
+    border-color:#8a6225;
+    color:#fff;
+  }
+  .chk.disabled{
+    opacity:0.35;
+    cursor:not-allowed;
+    background:repeating-linear-gradient(45deg, #ece3d0, #ece3d0 4px, #e4d8bd 4px, #e4d8bd 8px);
+  }
+  .chk:active:not(.disabled){transform:scale(0.96);}
+
+  .hint{
+    font-size:11.5px;
+    color:var(--ink-soft);
+    margin-top:10px;
+    line-height:1.5;
+  }
+
+  .submit-btn{
+    width:100%;
+    padding:16px 0;
+    background:linear-gradient(180deg, var(--seal), var(--seal-deep));
+    color:#fdf3ea;
+    border:none;
+    border-radius:4px;
+    font-size:17px;
+    font-weight:700;
+    letter-spacing:0.3em;
+    cursor:pointer;
+    box-shadow:0 6px 16px -6px rgba(110,29,24,0.6);
+    font-family:'Noto Serif TC', serif;
+    transition:transform .12s, box-shadow .12s;
+  }
+  .submit-btn:active{transform:translateY(1px); box-shadow:0 3px 10px -6px rgba(110,29,24,0.6);}
+
+  .error-banner{
+    background:#fdf2f0;
+    border:1px solid var(--seal);
+    color:var(--seal-deep);
+    padding:12px 14px;
+    border-radius:3px;
+    font-size:13px;
+    margin-bottom:18px;
+    line-height:1.6;
+    display:none;
+  }
+  .error-banner.show{display:block;}
+  .error-banner b{font-weight:700;}
+
+  /* Result */
+  .result-wrap{
+    display:none;
+    margin-top:6px;
+  }
+  .result-wrap.show{display:block;}
+  .result-card{
+    background:#fdfaf3;
+    border:1px solid var(--gold);
+    border-radius:4px;
+    padding:30px 24px;
+    position:relative;
+    overflow:hidden;
+  }
+  .result-line1{
+    font-family:'Noto Serif TC', serif;
+    font-size:21px;
+    font-weight:700;
+    color:var(--ink);
+    letter-spacing:0.06em;
+    margin-bottom:14px;
+  }
+  .result-line2{
+    font-family:'Noto Serif TC', serif;
+    font-size:18px;
+    font-weight:500;
+    color:var(--seal-deep);
+    line-height:1.9;
+    letter-spacing:0.03em;
+  }
+  .result-line2 .abbot{
+    color:var(--gold);
+    font-weight:800;
+  }
+  .result-actions{
+    display:flex;
+    flex-wrap:wrap;
+    gap:10px;
+    margin-top:18px;
+  }
+  .result-actions button{
+    flex:1 1 calc(50% - 5px);
+    min-width:120px;
+    padding:11px 0;
+    border-radius:3px;
+    font-size:13.5px;
+    font-weight:600;
+    cursor:pointer;
+    border:1px solid var(--line);
+    background:#fdfaf3;
+    color:var(--ink-soft);
+  }
+  .result-actions button.copy{
+    border-color:var(--seal);
+    color:var(--seal-deep);
+  }
+  .result-actions button.line-share{
+    border-color:#06c755;
+    background:#06c755;
+    color:#fff;
+  }
+  .result-actions button:active{transform:scale(0.98);}
+
+  .copied-flash{
+    text-align:center;
+    font-size:12px;
+    color:var(--ok);
+    margin-top:8px;
+    height:14px;
+    opacity:0;
+    transition:opacity .2s;
+  }
+  .copied-flash.show{opacity:1;}
+
+  footer{
+    text-align:center;
+    margin-top:32px;
+    font-size:11px;
+    color:var(--ink-soft);
+    letter-spacing:0.1em;
+  }
+</style>
+</head>
+<body>
+
+<div class="sheet">
+  <header>
+    <div class="eyebrow">道 場 文 疏</div>
+    <h1>稟 文 書 寫</h1>
+    <div class="sub">填具香客資料，核對無誤後生成稟文格式</div>
+  </header>
+
+  <div id="errorBanner" class="error-banner"></div>
+
+  <div id="formArea">
+    <div class="card">
+      <div class="field">
+        <label class="field-label">香客姓名<span class="req">＊</span></label>
+        <input type="text" id="name" placeholder="請輸入姓名" maxlength="20">
+      </div>
+
+      <div class="field">
+        <label class="field-label">性別<span class="req">＊</span></label>
+        <div class="gender-row">
+          <div class="gender-btn" data-gender="男">男</div>
+          <div class="gender-btn" data-gender="女">女</div>
+        </div>
+      </div>
+
+      <div class="field">
+        <label class="field-label">國曆生日（民國年）<span class="req">＊</span></label>
+        <div class="date-row">
+          <div class="field-wrap">
+            <input type="text" id="birthYear" inputmode="numeric" placeholder="民國年" maxlength="3">
+            <span class="unit">民國年（例 79）</span>
+          </div>
+          <div class="field-wrap">
+            <select id="birthMonth">
+              <option value="">月</option>
+            </select>
+            <span class="unit">月</span>
+          </div>
+          <div class="field-wrap">
+            <select id="birthDay">
+              <option value="">日</option>
+            </select>
+            <span class="unit">日</span>
+          </div>
+        </div>
+        <div id="lunarPreview" class="lunar-preview placeholder">輸入完整生日後，將自動換算農曆（民國年）</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <label class="field-label">事項勾選（可複選）</label>
+      <div class="check-grid" id="checkGrid"></div>
+      <div class="hint">＊勾選「一套」後，嬰、靈、好、辦 將自動鎖定無法勾選。</div>
+    </div>
+
+    <div class="card">
+      <div class="field">
+        <label class="field-label">住持代號<span class="req">＊</span></label>
+        <input type="text" id="abbotCode" placeholder="請輸入住持代號" maxlength="10">
+      </div>
+    </div>
+
+    <button class="submit-btn" id="submitBtn">確　認　生　成</button>
+  </div>
+
+  <div class="result-wrap" id="resultWrap">
+    <div class="result-card">
+      <div class="result-line1" id="resLine1"></div>
+      <div class="result-line2" id="resLine2"></div>
+    </div>
+    <div class="result-actions">
+      <button class="copy" id="copyBtn">複製文字</button>
+      <button class="line-share" id="lineShareBtn">LINE 分享</button>
+      <button id="editBtn">返回修改</button>
+    </div>
+    <div class="copied-flash" id="copiedFlash">已複製到剪貼簿</div>
+  </div>
+
+  <footer>稟　文　書　寫　系　統</footer>
+</div>
+
+<script>
+/* ===================== 農曆轉換資料（1900-2100） ===================== */
+/* 每年16進位資料：bit15-13 = 該年閏月(0=無)，bit12-1 = 12or13個月大小月(1=大月30, 0=小月29)，bit0=保留 */
+const lunarInfo = [
+0x04bd8,0x04ae0,0x0a570,0x054d5,0x0d260,0x0d950,0x16554,0x056a0,0x09ad0,0x055d2,
+0x04ae0,0x0a5b6,0x0a4d0,0x0d250,0x1d255,0x0b540,0x0d6a0,0x0ada2,0x095b0,0x14977,
+0x04970,0x0a4b0,0x0b4b5,0x06a50,0x06d40,0x1ab54,0x02b60,0x09570,0x052f2,0x04970,
+0x06566,0x0d4a0,0x0ea50,0x06e95,0x05ad0,0x02b60,0x186e3,0x092e0,0x1c8d7,0x0c950,
+0x0d4a0,0x1d8a6,0x0b550,0x056a0,0x1a5b4,0x025d0,0x092d0,0x0d2b2,0x0a950,0x0b557,
+0x06ca0,0x0b550,0x15355,0x04da0,0x0a5d0,0x14573,0x052d0,0x0a9a8,0x0e950,0x06aa0,
+0x0aea6,0x0ab50,0x04b60,0x0aae4,0x0a570,0x05260,0x0f263,0x0d950,0x05b57,0x056a0,
+0x096d0,0x04dd5,0x04ad0,0x0a4d0,0x0d4d4,0x0d250,0x0d558,0x0b540,0x0b5a0,0x195a6,
+0x095b0,0x049b0,0x0a974,0x0a4b0,0x0b27a,0x06a50,0x06d40,0x0af46,0x0ab60,0x09570,
+0x04af5,0x04970,0x064b0,0x074a3,0x0ea50,0x06b58,0x05ac0,0x0ab60,0x096d5,0x092e0,
+0x0c960,0x0d954,0x0d4a0,0x0da50,0x07552,0x056a0,0x0abb7,0x025d0,0x092d0,0x0cab5,
+0x0a950,0x0b4a0,0x0baa4,0x0ad50,0x055d9,0x04ba0,0x0a5b0,0x15176,0x052b0,0x0a930,
+0x07954,0x06aa0,0x0ad50,0x05b52,0x04b60,0x0a6e6,0x0a4e0,0x0d260,0x0ea65,0x0d530,
+0x05aa0,0x076a3,0x096d0,0x04bd7,0x04ad0,0x0a4d0,0x1d0b6,0x0d250,0x0d520,0x0dd45,
+0x0b5a0,0x056d0,0x055b2,0x049b0,0x0a577,0x0a4b0,0x0aa50,0x1b255,0x06d20,0x0ada0,
+0x14b63,0x09370,0x049f8,0x04970,0x064b0,0x168a6,0x0ea50,0x06b20,0x1a6c4,0x0aae0,
+0x0a2e0,0x0d2e3,0x0c960,0x0d557,0x0d4a0,0x0da50,0x05d55,0x056a0,0x0a6d0,0x055d4,
+0x052d0,0x0a9b8,0x0a950,0x0b4a0,0x0b6a6,0x0ad50,0x055a0,0x0aba4,0x0a5b0,0x052b0,
+0x0b273,0x06930,0x07337,0x06aa0,0x0ad50,0x14b55,0x04b60,0x0a570,0x054e4,0x0d160,
+0x0e968,0x0d520,0x0daa0,0x16aa6,0x056d0,0x04ae0,0x0a9d4,0x0a2d0,0x0d150,0x0f252,
+0x0d520
+];
+const lunarMonthName = ["正","二","三","四","五","六","七","八","九","十","十一","十二"];
+const lunarDayName = ["初一","初二","初三","初四","初五","初六","初七","初八","初九","初十",
+"十一","十二","十三","十四","十五","十六","十七","十八","十九","二十",
+"廿一","廿二","廿三","廿四","廿五","廿六","廿七","廿八","廿九","三十"];
+
+function lYearDays(y){
+  let sum = 348;
+  for(let i=0x8000;i>0x8;i>>=1) sum += (lunarInfo[y-1900] & i) ? 1 : 0;
+  return sum + leapDays(y);
+}
+function leapMonth(y){ return lunarInfo[y-1900] & 0xf; }
+function leapDays(y){
+  if(leapMonth(y)) return (lunarInfo[y-1900] & 0x10000) ? 30 : 29;
+  return 0;
+}
+function monthDays(y,m){
+  return (lunarInfo[y-1900] & (0x10000 >> m)) ? 30 : 29;
+}
+
+// 將公曆日期轉為農曆 {year, month, day, isLeap}
+function solarToLunar(y, m, d){
+  const baseDate = new Date(1900,0,31); // 1900-01-31 對應農曆 1900-01-01
+  const objDate = new Date(y, m-1, d);
+  let offset = Math.round((objDate - baseDate) / 86400000);
+
+  let lYear = 1900;
+  let daysOfYear = 0;
+  for(; lYear < 2101 && offset > 0; lYear++){
+    daysOfYear = lYearDays(lYear);
+    offset -= daysOfYear;
+  }
+  if(offset < 0){
+    offset += daysOfYear;
+    lYear--;
+  }
+
+  const leap = leapMonth(lYear);
+  let isLeap = false;
+  let lMonth = 1;
+  let daysOfMonth = 0;
+  for(; lMonth < 13 && offset > 0; lMonth++){
+    if(leap > 0 && lMonth === (leap + 1) && !isLeap){
+      lMonth--;
+      isLeap = true;
+      daysOfMonth = leapDays(lYear);
+    } else {
+      daysOfMonth = monthDays(lYear, lMonth);
+    }
+    if(isLeap && lMonth === (leap + 1)) isLeap = false;
+    offset -= daysOfMonth;
+  }
+  if(offset === 0 && leap > 0 && lMonth === leap + 1){
+    if(isLeap){
+      isLeap = false;
+    } else {
+      isLeap = true;
+      lMonth--;
+    }
+  }
+  if(offset < 0){
+    offset += daysOfMonth;
+    lMonth--;
+  }
+  const lDay = offset + 1;
+  return {year:lYear, month:lMonth, day:lDay, isLeap:isLeap};
+}
+
+/* ===================== 國曆年/民國年互換 ===================== */
+function adYearToROC(y){ return y - 1911; }
+
+/* ===================== 月/日下拉選單初始化 ===================== */
+const monthSel = document.getElementById('birthMonth');
+for(let i=1;i<=12;i++){
+  const o = document.createElement('option');
+  o.value = i; o.textContent = i + ' 月';
+  monthSel.appendChild(o);
+}
+function populateDays(){
+  const rocY = parseInt(document.getElementById('birthYear').value, 10);
+  const y = rocY ? rocY + 1911 : null;
+  const m = parseInt(monthSel.value, 10);
+  const daySel = document.getElementById('birthDay');
+  const prevVal = daySel.value;
+  daySel.innerHTML = '<option value="">日</option>';
+  let maxDay = 31;
+  if(m){
+    if([4,6,9,11].includes(m)) maxDay = 30;
+    else if(m === 2){
+      if(y && ((y%4===0 && y%100!==0) || y%400===0)) maxDay = 29;
+      else maxDay = 28;
+    }
+  }
+  for(let i=1;i<=maxDay;i++){
+    const o = document.createElement('option');
+    o.value = i; o.textContent = i + ' 日';
+    daySel.appendChild(o);
+  }
+  if(prevVal && parseInt(prevVal,10) <= maxDay) daySel.value = prevVal;
+}
+populateDays();
+monthSel.addEventListener('change', ()=>{ populateDays(); updateLunarPreview(); clearFieldError('birthMonth'); });
+document.getElementById('birthYear').addEventListener('input', ()=>{ populateDays(); updateLunarPreview(); clearFieldError('birthYear'); });
+document.getElementById('birthDay').addEventListener('change', ()=>{ updateLunarPreview(); clearFieldError('birthDay'); });
+
+function getLunarROCString(){
+  const rocY = parseInt(document.getElementById('birthYear').value, 10);
+  const m = parseInt(monthSel.value, 10);
+  const d = parseInt(document.getElementById('birthDay').value, 10);
+  if(!rocY || !m || !d || rocY < 1 || rocY > 188) return null;
+  const y = rocY + 1911;
+  if(y < 1901 || y > 2099) return null;
+  try{
+    const l = solarToLunar(y, m, d);
+    const rocYear = adYearToROC(l.year);
+    return {
+      display: `農${rocYear}.${l.month}.${l.day}` + (l.isLeap ? '（閏）' : ''),
+      output: `農${rocYear}.${String(l.month).padStart(2,'0')}.${String(l.day).padStart(2,'0')}`,
+      raw: l, rocYear: rocYear
+    };
+  }catch(e){ return null; }
+}
+
+function updateLunarPreview(){
+  const el = document.getElementById('lunarPreview');
+  const res = getLunarROCString();
+  if(res){
+    el.textContent = '農曆出生年月日（民國）： ' + res.display;
+    el.classList.remove('placeholder');
+  } else {
+    el.textContent = '輸入完整生日後，將自動換算農曆（民國年）';
+    el.classList.add('placeholder');
+  }
+}
+
+/* ===================== 性別選擇 ===================== */
+let selectedGender = null;
+document.querySelectorAll('.gender-btn').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    document.querySelectorAll('.gender-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    selectedGender = btn.dataset.gender;
+    clearFieldError('gender');
+  });
+});
+
+/* ===================== 勾選項目 ===================== */
+const checkItems = ['一套','嬰','靈','好','辦','冤','殺','運','病','功','車','財','官','桃','解','O氏','求壽'];
+const lockedBySet = ['嬰','靈','好','辦'];
+const grid = document.getElementById('checkGrid');
+const checkedState = {};
+checkItems.forEach(name=>{
+  const div = document.createElement('div');
+  div.className = 'chk' + (name === '一套' ? ' set-main' : '');
+  div.textContent = name;
+  div.dataset.name = name;
+  checkedState[name] = false;
+  div.addEventListener('click', ()=>{
+    if(div.classList.contains('disabled')) return;
+    checkedState[name] = !checkedState[name];
+    div.classList.toggle('checked', checkedState[name]);
+    if(name === '一套') applySetLock();
+  });
+  grid.appendChild(div);
+});
+function applySetLock(){
+  const isSet = checkedState['一套'];
+  lockedBySet.forEach(n=>{
+    const el = grid.querySelector(`[data-name="${n}"]`);
+    if(isSet){
+      checkedState[n] = false;
+      el.classList.remove('checked');
+      el.classList.add('disabled');
+    } else {
+      el.classList.remove('disabled');
+    }
+  });
+}
+
+/* ===================== 欄位錯誤標示 ===================== */
+function markFieldError(id){
+  const el = document.getElementById(id);
+  if(el) el.classList.add('err');
+}
+function clearFieldError(id){
+  if(id === 'gender'){
+    document.querySelectorAll('.gender-btn').forEach(b=>b.classList.remove('err'));
+    return;
+  }
+  const el = document.getElementById(id);
+  if(el) el.classList.remove('err');
+}
+document.getElementById('name').addEventListener('input', ()=>clearFieldError('name'));
+document.getElementById('abbotCode').addEventListener('input', ()=>clearFieldError('abbotCode'));
+
+/* ===================== 確認送出 ===================== */
+document.getElementById('submitBtn').addEventListener('click', ()=>{
+  const errors = [];
+  ['name','birthYear','birthMonth','birthDay','abbotCode'].forEach(clearFieldError);
+  document.querySelectorAll('.gender-btn').forEach(b=>b.classList.remove('err'));
+
+  const name = document.getElementById('name').value.trim();
+  const abbotCode = document.getElementById('abbotCode').value.trim();
+  const lunarRes = getLunarROCString();
+
+  if(!name){ errors.push('請輸入香客姓名'); markFieldError('name'); }
+  if(!selectedGender){
+    errors.push('請勾選性別');
+    document.querySelectorAll('.gender-btn').forEach(b=>b.classList.add('err'));
+  }
+  if(!document.getElementById('birthYear').value){ errors.push('請輸入出生民國年'); markFieldError('birthYear'); }
+  if(!monthSel.value){ errors.push('請選擇出生月份'); markFieldError('birthMonth'); }
+  if(!document.getElementById('birthDay').value){ errors.push('請選擇出生日期'); markFieldError('birthDay'); }
+  if(document.getElementById('birthYear').value && monthSel.value && document.getElementById('birthDay').value && !lunarRes){
+    errors.push('生日日期無效，請重新確認');
+    markFieldError('birthYear'); markFieldError('birthMonth'); markFieldError('birthDay');
+  }
+  const anyChecked = checkItems.some(n => checkedState[n]);
+  if(!anyChecked) errors.push('請至少勾選一項事項');
+  if(!abbotCode){ errors.push('請輸入住持代號'); markFieldError('abbotCode'); }
+
+  const banner = document.getElementById('errorBanner');
+  if(errors.length){
+    banner.innerHTML = '<b>請完成以下項目：</b><br>' + errors.join('、');
+    banner.classList.add('show');
+    banner.scrollIntoView({behavior:'smooth', block:'start'});
+    return;
+  }
+  banner.classList.remove('show');
+
+  // 組成輸出文字
+  const selectedItems = checkItems.filter(n => checkedState[n] && n !== '一套');
+  const finalItems = checkedState['一套'] ? ['一套', ...selectedItems] : selectedItems;
+  const itemsStr = finalItems.join('，');
+
+  const line1 = `${name} ${selectedGender} ${lunarRes.output}`;
+  const line2Plain = `${itemsStr}！${abbotCode}`;
+
+  document.getElementById('resLine1').textContent = line1;
+  document.getElementById('resLine2').innerHTML = escapeHtml(itemsStr) + '！<span class="abbot">' + escapeHtml(abbotCode) + '</span>';
+
+  document.getElementById('formArea').style.display = 'none';
+  document.getElementById('resultWrap').classList.add('show');
+  document.getElementById('resultWrap').dataset.fulltext = line1 + '\n' + line2Plain;
+  document.getElementById('resultWrap').scrollIntoView({behavior:'smooth', block:'start'});
+});
+
+function escapeHtml(s){
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+document.getElementById('editBtn').addEventListener('click', ()=>{
+  document.getElementById('resultWrap').classList.remove('show');
+  document.getElementById('formArea').style.display = 'block';
+  window.scrollTo({top:0, behavior:'smooth'});
+});
+
+document.getElementById('copyBtn').addEventListener('click', async ()=>{
+  const text = document.getElementById('resultWrap').dataset.fulltext || '';
+  try{
+    await navigator.clipboard.writeText(text);
+  }catch(e){
+    const ta = document.createElement('textarea');
+    ta.value = text; document.body.appendChild(ta); ta.select();
+    document.execCommand('copy'); document.body.removeChild(ta);
+  }
+  const flash = document.getElementById('copiedFlash');
+  flash.classList.add('show');
+  setTimeout(()=>flash.classList.remove('show'), 1600);
+});
+
+document.getElementById('lineShareBtn').addEventListener('click', ()=>{
+  const text = document.getElementById('resultWrap').dataset.fulltext || '';
+  const url = 'https://line.me/R/msg/text/?' + encodeURIComponent(text);
+  window.open(url, '_blank');
+});
+
+/* ===================== PWA Service Worker 註冊 ===================== */
+if('serviceWorker' in navigator){
+  window.addEventListener('load', ()=>{
+    navigator.serviceWorker.register('./sw.js').catch(()=>{});
+  });
+}
+</script>
+</body>
+</html>
