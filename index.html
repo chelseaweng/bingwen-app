@@ -149,6 +149,7 @@
     border-color:var(--seal-deep);
     color:#fdf3ea;
   }
+  .gender-btn.err{border-color:var(--seal); background:#fdf2f0;}
   .gender-btn:active{transform:scale(0.98);}
 
   .date-row{display:flex; gap:8px;}
@@ -231,22 +232,42 @@
     line-height:1.5;
   }
 
-  .submit-btn{
+  .submit-btn, .secondary-btn, .add-btn{
     width:100%;
-    padding:16px 0;
-    background:linear-gradient(180deg, var(--seal), var(--seal-deep));
-    color:#fdf3ea;
-    border:none;
+    padding:14px 0;
     border-radius:4px;
-    font-size:17px;
+    font-size:15px;
     font-weight:700;
-    letter-spacing:0.3em;
+    letter-spacing:0.15em;
     cursor:pointer;
-    box-shadow:0 6px 16px -6px rgba(110,29,24,0.6);
     font-family:'Noto Serif TC', serif;
     transition:transform .12s, box-shadow .12s;
   }
+  .submit-btn{
+    background:linear-gradient(180deg, var(--seal), var(--seal-deep));
+    color:#fdf3ea;
+    border:none;
+    box-shadow:0 6px 16px -6px rgba(110,29,24,0.6);
+    font-size:17px;
+    letter-spacing:0.3em;
+    padding:16px 0;
+  }
   .submit-btn:active{transform:translateY(1px); box-shadow:0 3px 10px -6px rgba(110,29,24,0.6);}
+  .secondary-btn{
+    background:#fdfaf3;
+    color:var(--ink-soft);
+    border:1px solid var(--line);
+    margin-top:10px;
+  }
+  .add-btn{
+    background:transparent;
+    color:var(--seal-deep);
+    border:1px dashed var(--seal);
+    margin-bottom:18px;
+    font-size:14px;
+    letter-spacing:0.1em;
+  }
+  .add-btn:active, .secondary-btn:active{transform:scale(0.98);}
 
   .error-banner{
     background:#fdf2f0;
@@ -262,31 +283,244 @@
   .error-banner.show{display:block;}
   .error-banner b{font-weight:700;}
 
+  /* Devotee cards */
+  .devotee-card{
+    position:relative;
+    border:1px solid var(--line);
+    border-radius:4px;
+    padding:18px 16px 14px;
+    margin-bottom:14px;
+    background:rgba(253,250,243,0.7);
+  }
+  .devotee-card:last-child{margin-bottom:0;}
+  .devotee-card.has-yuansha{
+    border-color:var(--seal);
+    box-shadow:0 0 0 1px rgba(142,42,35,0.08) inset;
+  }
+  .devotee-header{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    margin-bottom:14px;
+    padding-bottom:10px;
+    border-bottom:1px dashed var(--line);
+  }
+  .devotee-title{
+    font-family:'Noto Serif TC', serif;
+    font-size:15px;
+    font-weight:700;
+    color:var(--seal-deep);
+    letter-spacing:0.08em;
+  }
+  .devotee-badge{
+    font-size:11px;
+    color:var(--seal);
+    background:rgba(142,42,35,0.08);
+    padding:2px 8px;
+    border-radius:2px;
+    margin-left:8px;
+    font-weight:600;
+  }
+  .remove-devotee-btn{
+    border:none;
+    background:transparent;
+    color:var(--ink-soft);
+    font-size:12px;
+    cursor:pointer;
+    padding:4px 8px;
+    border-radius:3px;
+  }
+  .remove-devotee-btn:hover{color:var(--seal);}
+
+  /* YuanSha step */
+  .step-title{
+    font-family:'Noto Serif TC', serif;
+    font-size:18px;
+    font-weight:700;
+    color:var(--seal-deep);
+    margin:0 0 8px;
+    letter-spacing:0.1em;
+  }
+  .step-desc{
+    font-size:13px;
+    color:var(--ink-soft);
+    line-height:1.6;
+    margin-bottom:16px;
+  }
+  .choice-row{
+    display:flex;
+    gap:10px;
+    margin-bottom:18px;
+  }
+  .choice-btn{
+    flex:1;
+    padding:12px 8px;
+    text-align:center;
+    border:1px solid var(--line);
+    border-radius:3px;
+    background:#fdfaf3;
+    cursor:pointer;
+    font-size:14px;
+    font-weight:600;
+    color:var(--ink-soft);
+    transition:all .15s;
+  }
+  .choice-btn.active{
+    background:var(--seal);
+    border-color:var(--seal-deep);
+    color:#fdf3ea;
+  }
+
+  .group-card{
+    border:1px solid var(--gold);
+    border-radius:4px;
+    padding:16px;
+    margin-bottom:12px;
+    background:rgba(168,123,53,0.05);
+  }
+  .group-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:12px;
+  }
+  .group-title{
+    font-size:14px;
+    font-weight:700;
+    color:var(--gold);
+    letter-spacing:0.06em;
+  }
+  .group-remove-btn{
+    border:none;
+    background:transparent;
+    color:var(--ink-soft);
+    font-size:12px;
+    cursor:pointer;
+  }
+  .member-chips{
+    display:flex;
+    flex-wrap:wrap;
+    gap:6px;
+    margin-bottom:12px;
+    min-height:24px;
+  }
+  .member-chip{
+    display:inline-flex;
+    align-items:center;
+    gap:4px;
+    padding:4px 10px;
+    background:var(--seal);
+    color:#fdf3ea;
+    border-radius:3px;
+    font-size:12.5px;
+    font-weight:600;
+  }
+  .member-chip .chip-remove{
+    cursor:pointer;
+    opacity:0.8;
+    font-size:14px;
+    line-height:1;
+    border:none;
+    background:transparent;
+    color:inherit;
+    padding:0;
+  }
+  .member-chip.empty-hint{
+    background:transparent;
+    color:var(--ink-soft);
+    border:1px dashed var(--line);
+    font-weight:400;
+  }
+  .pick-list{
+    display:flex;
+    flex-direction:column;
+    gap:6px;
+    margin-bottom:10px;
+  }
+  .pick-item{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    padding:8px 10px;
+    border:1px solid var(--line);
+    border-radius:3px;
+    background:#fdfaf3;
+    font-size:13px;
+    cursor:pointer;
+  }
+  .pick-item input{accent-color:var(--seal); width:16px; height:16px;}
+  .pick-item.yuansha-tag{border-color:rgba(142,42,35,0.35);}
+  .pick-item .tag{
+    font-size:10px;
+    color:var(--seal);
+    background:rgba(142,42,35,0.1);
+    padding:1px 6px;
+    border-radius:2px;
+    margin-left:auto;
+  }
+  .inline-add-btn{
+    width:100%;
+    padding:9px;
+    border:1px dashed var(--line);
+    border-radius:3px;
+    background:transparent;
+    color:var(--ink-soft);
+    font-size:12.5px;
+    cursor:pointer;
+    margin-top:4px;
+  }
+  .inline-add-form{
+    display:none;
+    margin-top:10px;
+    padding:12px;
+    border:1px dashed var(--line);
+    border-radius:3px;
+    background:#fdfaf3;
+  }
+  .inline-add-form.show{display:block;}
+
   /* Result */
   .result-wrap{
     display:none;
     margin-top:6px;
   }
   .result-wrap.show{display:block;}
+  .result-group{
+    margin-bottom:16px;
+  }
+  .result-group:last-child{margin-bottom:0;}
+  .result-group-label{
+    font-size:11px;
+    color:var(--gold);
+    font-weight:600;
+    letter-spacing:0.12em;
+    margin-bottom:6px;
+  }
   .result-card{
     background:#fdfaf3;
     border:1px solid var(--gold);
     border-radius:4px;
-    padding:30px 24px;
+    padding:24px 20px;
     position:relative;
     overflow:hidden;
   }
   .result-line1{
     font-family:'Noto Serif TC', serif;
-    font-size:21px;
+    font-size:19px;
     font-weight:700;
     color:var(--ink);
-    letter-spacing:0.06em;
-    margin-bottom:14px;
+    letter-spacing:0.04em;
+    margin-bottom:12px;
+    line-height:1.7;
+  }
+  .result-line1 .devotee-sep{
+    color:var(--ink-soft);
+    margin:0 6px;
+    font-weight:400;
   }
   .result-line2{
     font-family:'Noto Serif TC', serif;
-    font-size:18px;
+    font-size:17px;
     font-weight:500;
     color:var(--seal-deep);
     line-height:1.9;
@@ -351,55 +585,14 @@
   <header>
     <div class="eyebrow">道 場 文 疏</div>
     <h1>稟 文 書 寫</h1>
-    <div class="sub">填具香客資料，核對無誤後生成稟文格式</div>
+    <div class="sub">可一次填寫多筆香客資料，批次生成稟文格式</div>
   </header>
 
   <div id="errorBanner" class="error-banner"></div>
 
   <div id="formArea">
-    <div class="card">
-      <div class="field">
-        <label class="field-label">香客姓名<span class="req">＊</span></label>
-        <input type="text" id="name" placeholder="請輸入姓名" maxlength="20">
-      </div>
-
-      <div class="field">
-        <label class="field-label">性別<span class="req">＊</span></label>
-        <div class="gender-row">
-          <div class="gender-btn" data-gender="男">男</div>
-          <div class="gender-btn" data-gender="女">女</div>
-        </div>
-      </div>
-
-      <div class="field">
-        <label class="field-label">國曆生日（民國年）<span class="req">＊</span></label>
-        <div class="date-row">
-          <div class="field-wrap">
-            <input type="text" id="birthYear" inputmode="numeric" placeholder="民國年" maxlength="3">
-            <span class="unit">民國年（例 79）</span>
-          </div>
-          <div class="field-wrap">
-            <select id="birthMonth">
-              <option value="">月</option>
-            </select>
-            <span class="unit">月</span>
-          </div>
-          <div class="field-wrap">
-            <select id="birthDay">
-              <option value="">日</option>
-            </select>
-            <span class="unit">日</span>
-          </div>
-        </div>
-        <div id="lunarPreview" class="lunar-preview placeholder">輸入完整生日後，將自動換算農曆（民國年）</div>
-      </div>
-    </div>
-
-    <div class="card">
-      <label class="field-label">事項勾選（可複選）</label>
-      <div class="check-grid" id="checkGrid"></div>
-      <div class="hint">＊勾選「一套」後，嬰、靈、好、辦 將自動鎖定無法勾選。</div>
-    </div>
+    <div id="devoteeList"></div>
+    <button class="add-btn" id="addDevoteeBtn">＋ 新增香客</button>
 
     <div class="card">
       <div class="field">
@@ -411,11 +604,26 @@
     <button class="submit-btn" id="submitBtn">確　認　生　成</button>
   </div>
 
-  <div class="result-wrap" id="resultWrap">
-    <div class="result-card">
-      <div class="result-line1" id="resLine1"></div>
-      <div class="result-line2" id="resLine2"></div>
+  <div id="yuanShaArea" style="display:none;">
+    <div class="card">
+      <h2 class="step-title">冤殺對卸設定</h2>
+      <p class="step-desc" id="yuanShaDesc"></p>
+      <div class="choice-row">
+        <div class="choice-btn" data-choice="yes" id="yuanShaYes">需要冤殺對卸</div>
+        <div class="choice-btn" data-choice="no" id="yuanShaNo">不需要，各自獨立</div>
+      </div>
+      <div id="groupBuilder" style="display:none;">
+        <div class="hint" style="margin-bottom:14px;">請將需冤殺對卸的香客分至同一組。可從現有香客選取，或新增對卸香客。</div>
+        <div id="groupsContainer"></div>
+        <button class="add-btn" id="addGroupBtn" style="margin-top:4px;">＋ 新增對卸組</button>
+      </div>
     </div>
+    <button class="submit-btn" id="generateBtn">確　認　生　成</button>
+    <button class="secondary-btn" id="backToFormBtn">返回修改香客資料</button>
+  </div>
+
+  <div class="result-wrap" id="resultWrap">
+    <div id="resultGroups"></div>
     <div class="result-actions">
       <button class="copy" id="copyBtn">複製文字</button>
       <button class="line-share" id="lineShareBtn">LINE 分享</button>
@@ -429,7 +637,6 @@
 
 <script>
 /* ===================== 農曆轉換資料（1900-2100） ===================== */
-/* 每年16進位資料：bit15-13 = 該年閏月(0=無)，bit12-1 = 12or13個月大小月(1=大月30, 0=小月29)，bit0=保留 */
 const lunarInfo = [
 0x04bd8,0x04ae0,0x0a570,0x054d5,0x0d260,0x0d950,0x16554,0x056a0,0x09ad0,0x055d2,
 0x04ae0,0x0a5b6,0x0a4d0,0x0d250,0x1d255,0x0b540,0x0d6a0,0x0ada2,0x095b0,0x14977,
@@ -453,7 +660,6 @@ const lunarInfo = [
 0x0e968,0x0d520,0x0daa0,0x16aa6,0x056d0,0x04ae0,0x0a9d4,0x0a2d0,0x0d150,0x0f252,
 0x0d520
 ];
-const lunarMonthName = ["正","二","三","四","五","六","七","八","九","十","十一","十二"];
 const lunarDayName = ["初一","初二","初三","初四","初五","初六","初七","初八","初九","初十",
 "十一","十二","十三","十四","十五","十六","十七","十八","十九","二十",
 "廿一","廿二","廿三","廿四","廿五","廿六","廿七","廿八","廿九","三十"];
@@ -471,71 +677,87 @@ function leapDays(y){
 function monthDays(y,m){
   return (lunarInfo[y-1900] & (0x10000 >> m)) ? 30 : 29;
 }
-
-// 將公曆日期轉為農曆 {year, month, day, isLeap}
 function solarToLunar(y, m, d){
-  const baseDate = new Date(1900,0,31); // 1900-01-31 對應農曆 1900-01-01
+  const baseDate = new Date(1900,0,31);
   const objDate = new Date(y, m-1, d);
   let offset = Math.round((objDate - baseDate) / 86400000);
-
   let lYear = 1900;
   let daysOfYear = 0;
   for(; lYear < 2101 && offset > 0; lYear++){
     daysOfYear = lYearDays(lYear);
     offset -= daysOfYear;
   }
-  if(offset < 0){
-    offset += daysOfYear;
-    lYear--;
-  }
-
+  if(offset < 0){ offset += daysOfYear; lYear--; }
   const leap = leapMonth(lYear);
   let isLeap = false;
   let lMonth = 1;
   let daysOfMonth = 0;
   for(; lMonth < 13 && offset > 0; lMonth++){
     if(leap > 0 && lMonth === (leap + 1) && !isLeap){
-      lMonth--;
-      isLeap = true;
-      daysOfMonth = leapDays(lYear);
-    } else {
-      daysOfMonth = monthDays(lYear, lMonth);
-    }
+      lMonth--; isLeap = true; daysOfMonth = leapDays(lYear);
+    } else { daysOfMonth = monthDays(lYear, lMonth); }
     if(isLeap && lMonth === (leap + 1)) isLeap = false;
     offset -= daysOfMonth;
   }
   if(offset === 0 && leap > 0 && lMonth === leap + 1){
-    if(isLeap){
-      isLeap = false;
-    } else {
-      isLeap = true;
-      lMonth--;
-    }
+    if(isLeap){ isLeap = false; } else { isLeap = true; lMonth--; }
   }
-  if(offset < 0){
-    offset += daysOfMonth;
-    lMonth--;
-  }
+  if(offset < 0){ offset += daysOfMonth; lMonth--; }
   const lDay = offset + 1;
   return {year:lYear, month:lMonth, day:lDay, isLeap:isLeap};
 }
-
-/* ===================== 國曆年/民國年互換 ===================== */
 function adYearToROC(y){ return y - 1911; }
 
-/* ===================== 月/日下拉選單初始化 ===================== */
-const monthSel = document.getElementById('birthMonth');
-for(let i=1;i<=12;i++){
-  const o = document.createElement('option');
-  o.value = i; o.textContent = i + ' 月';
-  monthSel.appendChild(o);
+/* ===================== 常數與狀態 ===================== */
+const checkItems = ['一套','嬰','靈','好','辦','冤','殺','運','病','功','車','財','官','桃','解','O氏','求壽'];
+const lockedBySet = ['嬰','靈','好','辦'];
+let devoteeIdCounter = 0;
+let devotees = [];
+let yuanShaChoice = null;
+let pairGroups = [];
+let pendingValidated = null;
+
+function newDevoteeData(){
+  const id = 'd' + (++devoteeIdCounter);
+  const items = {};
+  checkItems.forEach(n => items[n] = false);
+  return { id, name:'', gender:null, birthYear:'', birthMonth:'', birthDay:'', items, lunarRes:null, isPairOnly:false };
 }
-function populateDays(){
-  const rocY = parseInt(document.getElementById('birthYear').value, 10);
+
+function hasYuanOrSha(dev){
+  return dev.items['冤'] || dev.items['殺'];
+}
+
+function getSelectedItems(dev){
+  const selected = checkItems.filter(n => dev.items[n] && n !== '一套');
+  return dev.items['一套'] ? ['一套', ...selected] : selected;
+}
+
+function mergeItems(devs){
+  const merged = {};
+  checkItems.forEach(n => merged[n] = false);
+  devs.forEach(d => checkItems.forEach(n => { if(d.items[n]) merged[n] = true; }));
+  const selected = checkItems.filter(n => merged[n] && n !== '一套');
+  return merged['一套'] ? ['一套', ...selected] : selected;
+}
+
+function calcLunar(rocY, m, d){
+  if(!rocY || !m || !d || rocY < 1 || rocY > 188) return null;
+  const y = rocY + 1911;
+  if(y < 1901 || y > 2099) return null;
+  try{
+    const l = solarToLunar(y, m, d);
+    const rocYear = adYearToROC(l.year);
+    return {
+      display: `農${rocYear}.${l.month}.${l.day}` + (l.isLeap ? '（閏）' : ''),
+      output: `農${rocYear}.${String(l.month).padStart(2,'0')}.${String(l.day).padStart(2,'0')}`,
+      raw: l, rocYear
+    };
+  }catch(e){ return null; }
+}
+
+function populateDayOptions(daySel, rocY, m, prevVal){
   const y = rocY ? rocY + 1911 : null;
-  const m = parseInt(monthSel.value, 10);
-  const daySel = document.getElementById('birthDay');
-  const prevVal = daySel.value;
   daySel.innerHTML = '<option value="">日</option>';
   let maxDay = 31;
   if(m){
@@ -552,77 +774,36 @@ function populateDays(){
   }
   if(prevVal && parseInt(prevVal,10) <= maxDay) daySel.value = prevVal;
 }
-populateDays();
-monthSel.addEventListener('change', ()=>{ populateDays(); updateLunarPreview(); clearFieldError('birthMonth'); });
-document.getElementById('birthYear').addEventListener('input', ()=>{ populateDays(); updateLunarPreview(); clearFieldError('birthYear'); });
-document.getElementById('birthDay').addEventListener('change', ()=>{ updateLunarPreview(); clearFieldError('birthDay'); });
 
-function getLunarROCString(){
-  const rocY = parseInt(document.getElementById('birthYear').value, 10);
-  const m = parseInt(monthSel.value, 10);
-  const d = parseInt(document.getElementById('birthDay').value, 10);
-  if(!rocY || !m || !d || rocY < 1 || rocY > 188) return null;
-  const y = rocY + 1911;
-  if(y < 1901 || y > 2099) return null;
-  try{
-    const l = solarToLunar(y, m, d);
-    const rocYear = adYearToROC(l.year);
-    return {
-      display: `農${rocYear}.${l.month}.${l.day}` + (l.isLeap ? '（閏）' : ''),
-      output: `農${rocYear}.${String(l.month).padStart(2,'0')}.${String(l.day).padStart(2,'0')}`,
-      raw: l, rocYear: rocYear
-    };
-  }catch(e){ return null; }
+function buildCheckGrid(container, dev){
+  container.innerHTML = '';
+  dev.items = dev.items || {};
+  checkItems.forEach(name => {
+    if(dev.items[name] === undefined) dev.items[name] = false;
+    const div = document.createElement('div');
+    div.className = 'chk' + (name === '一套' ? ' set-main' : '');
+    div.textContent = name;
+    div.dataset.name = name;
+    if(dev.items[name]) div.classList.add('checked');
+    div.addEventListener('click', ()=>{
+      if(div.classList.contains('disabled')) return;
+      dev.items[name] = !dev.items[name];
+      div.classList.toggle('checked', dev.items[name]);
+      if(name === '一套') applySetLock(container, dev);
+      updateDevoteeCardStyle(dev.id);
+    });
+    container.appendChild(div);
+  });
+  applySetLock(container, dev);
 }
 
-function updateLunarPreview(){
-  const el = document.getElementById('lunarPreview');
-  const res = getLunarROCString();
-  if(res){
-    el.textContent = '農曆出生年月日（民國）： ' + res.display;
-    el.classList.remove('placeholder');
-  } else {
-    el.textContent = '輸入完整生日後，將自動換算農曆（民國年）';
-    el.classList.add('placeholder');
-  }
-}
-
-/* ===================== 性別選擇 ===================== */
-let selectedGender = null;
-document.querySelectorAll('.gender-btn').forEach(btn=>{
-  btn.addEventListener('click', ()=>{
-    document.querySelectorAll('.gender-btn').forEach(b=>b.classList.remove('active'));
-    btn.classList.add('active');
-    selectedGender = btn.dataset.gender;
-    clearFieldError('gender');
-  });
-});
-
-/* ===================== 勾選項目 ===================== */
-const checkItems = ['一套','嬰','靈','好','辦','冤','殺','運','病','功','車','財','官','桃','解','O氏','求壽'];
-const lockedBySet = ['嬰','靈','好','辦'];
-const grid = document.getElementById('checkGrid');
-const checkedState = {};
-checkItems.forEach(name=>{
-  const div = document.createElement('div');
-  div.className = 'chk' + (name === '一套' ? ' set-main' : '');
-  div.textContent = name;
-  div.dataset.name = name;
-  checkedState[name] = false;
-  div.addEventListener('click', ()=>{
-    if(div.classList.contains('disabled')) return;
-    checkedState[name] = !checkedState[name];
-    div.classList.toggle('checked', checkedState[name]);
-    if(name === '一套') applySetLock();
-  });
-  grid.appendChild(div);
-});
-function applySetLock(){
-  const isSet = checkedState['一套'];
+function applySetLock(container, dev){
+  const isSet = dev.items['一套'];
   lockedBySet.forEach(n=>{
-    const el = grid.querySelector(`[data-name="${n}"]`);
+    const el = container.querySelector(`[data-name="${n}"]`);
+    if(!el) return;
     if(isSet){
-      checkedState[n] = false;
+      dev.items[n] = false;
       el.classList.remove('checked');
       el.classList.add('disabled');
     } else {
@@ -631,81 +812,562 @@ function applySetLock(){
   });
 }
 
-/* ===================== 欄位錯誤標示 ===================== */
-function markFieldError(id){
-  const el = document.getElementById(id);
-  if(el) el.classList.add('err');
-}
-function clearFieldError(id){
-  if(id === 'gender'){
-    document.querySelectorAll('.gender-btn').forEach(b=>b.classList.remove('err'));
-    return;
+function updateLunarPreviewForDev(dev){
+  const el = document.querySelector(`[data-lunar-preview="${dev.id}"]`);
+  if(!el) return;
+  const rocY = parseInt(dev.birthYear, 10);
+  const m = parseInt(dev.birthMonth, 10);
+  const d = parseInt(dev.birthDay, 10);
+  dev.lunarRes = calcLunar(rocY, m, d);
+  if(dev.lunarRes){
+    el.textContent = '農曆出生年月日（民國）： ' + dev.lunarRes.display;
+    el.classList.remove('placeholder');
+  } else {
+    el.textContent = '輸入完整生日後，將自動換算農曆（民國年）';
+    el.classList.add('placeholder');
   }
-  const el = document.getElementById(id);
-  if(el) el.classList.remove('err');
 }
-document.getElementById('name').addEventListener('input', ()=>clearFieldError('name'));
-document.getElementById('abbotCode').addEventListener('input', ()=>clearFieldError('abbotCode'));
 
-/* ===================== 確認送出 ===================== */
-document.getElementById('submitBtn').addEventListener('click', ()=>{
+function updateDevoteeCardStyle(id){
+  const card = document.querySelector(`[data-devotee-card="${id}"]`);
+  const dev = devotees.find(d => d.id === id);
+  if(card && dev) card.classList.toggle('has-yuansha', hasYuanOrSha(dev));
+}
+
+function renderDevoteeCard(dev, index){
+  const card = document.createElement('div');
+  card.className = 'devotee-card' + (hasYuanOrSha(dev) ? ' has-yuansha' : '');
+  card.dataset.devoteeCard = dev.id;
+
+  const canRemove = devotees.length > 1 && !dev.isPairOnly;
+  card.innerHTML = `
+    <div class="devotee-header">
+      <div>
+        <span class="devotee-title">香客 ${index + 1}</span>
+        ${hasYuanOrSha(dev) ? '<span class="devotee-badge">冤／殺</span>' : ''}
+      </div>
+      ${canRemove ? '<button type="button" class="remove-devotee-btn" data-remove="' + dev.id + '">移除</button>' : ''}
+    </div>
+    <div class="field">
+      <label class="field-label">香客姓名<span class="req">＊</span></label>
+      <input type="text" data-field="name" data-id="${dev.id}" placeholder="請輸入姓名" maxlength="20" value="${escapeAttr(dev.name)}">
+    </div>
+    <div class="field">
+      <label class="field-label">性別<span class="req">＊</span></label>
+      <div class="gender-row" data-gender-row="${dev.id}">
+        <div class="gender-btn${dev.gender==='男'?' active':''}" data-gender="男" data-id="${dev.id}">男</div>
+        <div class="gender-btn${dev.gender==='女'?' active':''}" data-gender="女" data-id="${dev.id}">女</div>
+      </div>
+    </div>
+    <div class="field">
+      <label class="field-label">國曆生日（民國年）<span class="req">＊</span></label>
+      <div class="date-row">
+        <div class="field-wrap">
+          <input type="text" data-field="birthYear" data-id="${dev.id}" inputmode="numeric" placeholder="民國年" maxlength="3" value="${escapeAttr(dev.birthYear)}">
+          <span class="unit">民國年（例 79）</span>
+        </div>
+        <div class="field-wrap">
+          <select data-field="birthMonth" data-id="${dev.id}"></select>
+          <span class="unit">月</span>
+        </div>
+        <div class="field-wrap">
+          <select data-field="birthDay" data-id="${dev.id}"></select>
+          <span class="unit">日</span>
+        </div>
+      </div>
+      <div class="lunar-preview placeholder" data-lunar-preview="${dev.id}">輸入完整生日後，將自動換算農曆（民國年）</div>
+    </div>
+    <div class="field">
+      <label class="field-label">事項勾選（可複選）<span class="req">＊</span></label>
+      <div class="check-grid" data-check-grid="${dev.id}"></div>
+      <div class="hint">＊勾選「一套」後，嬰、靈、好、辦 將自動鎖定無法勾選。</div>
+    </div>
+  `;
+
+  const monthSel = card.querySelector('[data-field="birthMonth"]');
+  monthSel.innerHTML = '<option value="">月</option>';
+  for(let i=1;i<=12;i++){
+    const o = document.createElement('option');
+    o.value = i; o.textContent = i + ' 月';
+    if(String(dev.birthMonth) === String(i)) o.selected = true;
+    monthSel.appendChild(o);
+  }
+  const daySel = card.querySelector('[data-field="birthDay"]');
+  populateDayOptions(daySel, parseInt(dev.birthYear,10), parseInt(dev.birthMonth,10), dev.birthDay);
+  if(dev.birthDay) daySel.value = dev.birthDay;
+
+  const grid = card.querySelector(`[data-check-grid="${dev.id}"]`);
+  buildCheckGrid(grid, dev);
+  updateLunarPreviewForDev(dev);
+
+  card.querySelectorAll('[data-field]').forEach(el=>{
+    const handler = ()=>{
+      const field = el.dataset.field;
+      const d = devotees.find(x => x.id === el.dataset.id);
+      if(!d) return;
+      d[field] = el.value;
+      el.classList.remove('err');
+      if(field === 'birthYear' || field === 'birthMonth'){
+        populateDayOptions(
+          card.querySelector('[data-field="birthDay"]'),
+          parseInt(d.birthYear,10),
+          parseInt(d.birthMonth,10),
+          d.birthDay
+        );
+      }
+      updateLunarPreviewForDev(d);
+    };
+    el.addEventListener('input', handler);
+    el.addEventListener('change', handler);
+  });
+
+  card.querySelectorAll('.gender-btn').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      const d = devotees.find(x => x.id === btn.dataset.id);
+      if(!d) return;
+      card.querySelectorAll('.gender-btn').forEach(b=>b.classList.remove('active','err'));
+      btn.classList.add('active');
+      d.gender = btn.dataset.gender;
+    });
+  });
+
+  const removeBtn = card.querySelector('[data-remove]');
+  if(removeBtn){
+    removeBtn.addEventListener('click', ()=>{
+      devotees = devotees.filter(d => d.id !== dev.id);
+      renderDevoteeList();
+    });
+  }
+
+  return card;
+}
+
+function renderDevoteeList(){
+  const list = document.getElementById('devoteeList');
+  list.innerHTML = '';
+  devotees.forEach((dev, i)=>{
+    const wrapper = document.createElement('div');
+    wrapper.className = 'card';
+    wrapper.appendChild(renderDevoteeCard(dev, i));
+    list.appendChild(wrapper);
+  });
+}
+
+function addDevotee(data){
+  devotees.push(data || newDevoteeData());
+  renderDevoteeList();
+}
+
+function readDevoteeFromDOM(dev){
+  const card = document.querySelector(`[data-devotee-card="${dev.id}"]`);
+  if(!card) return dev;
+  dev.name = (card.querySelector('[data-field="name"]')?.value || '').trim();
+  dev.birthYear = card.querySelector('[data-field="birthYear"]')?.value || '';
+  dev.birthMonth = card.querySelector('[data-field="birthMonth"]')?.value || '';
+  dev.birthDay = card.querySelector('[data-field="birthDay"]')?.value || '';
+  const rocY = parseInt(dev.birthYear, 10);
+  const m = parseInt(dev.birthMonth, 10);
+  const d = parseInt(dev.birthDay, 10);
+  dev.lunarRes = calcLunar(rocY, m, d);
+  return dev;
+}
+
+function validateDevotee(dev, label){
   const errors = [];
-  ['name','birthYear','birthMonth','birthDay','abbotCode'].forEach(clearFieldError);
-  document.querySelectorAll('.gender-btn').forEach(b=>b.classList.remove('err'));
+  const card = document.querySelector(`[data-devotee-card="${dev.id}"]`);
+  readDevoteeFromDOM(dev);
 
-  const name = document.getElementById('name').value.trim();
+  const clearErr = (sel) => card?.querySelector(sel)?.classList.remove('err');
+  const markErr = (sel) => card?.querySelector(sel)?.classList.add('err');
+
+  if(!dev.name){ errors.push(`${label}：請輸入姓名`); markErr('[data-field="name"]'); }
+  if(!dev.gender){
+    errors.push(`${label}：請勾選性別`);
+    card?.querySelectorAll('.gender-btn').forEach(b=>b.classList.add('err'));
+  }
+  if(!dev.birthYear){ errors.push(`${label}：請輸入出生民國年`); markErr('[data-field="birthYear"]'); }
+  if(!dev.birthMonth){ errors.push(`${label}：請選擇出生月份`); markErr('[data-field="birthMonth"]'); }
+  if(!dev.birthDay){ errors.push(`${label}：請選擇出生日期`); markErr('[data-field="birthDay"]'); }
+  if(dev.birthYear && dev.birthMonth && dev.birthDay && !dev.lunarRes){
+    errors.push(`${label}：生日日期無效`);
+    markErr('[data-field="birthYear"]'); markErr('[data-field="birthMonth"]'); markErr('[data-field="birthDay"]');
+  }
+  if(!checkItems.some(n => dev.items[n])) errors.push(`${label}：請至少勾選一項事項`);
+
+  return errors;
+}
+
+function validateAll(){
+  devotees.forEach(d => readDevoteeFromDOM(d));
+  const errors = [];
+  devotees.forEach((d, i) => errors.push(...validateDevotee(d, `香客 ${i + 1}`)));
   const abbotCode = document.getElementById('abbotCode').value.trim();
-  const lunarRes = getLunarROCString();
-
-  if(!name){ errors.push('請輸入香客姓名'); markFieldError('name'); }
-  if(!selectedGender){
-    errors.push('請勾選性別');
-    document.querySelectorAll('.gender-btn').forEach(b=>b.classList.add('err'));
+  if(!abbotCode){
+    errors.push('請輸入住持代號');
+    document.getElementById('abbotCode').classList.add('err');
+  } else {
+    document.getElementById('abbotCode').classList.remove('err');
   }
-  if(!document.getElementById('birthYear').value){ errors.push('請輸入出生民國年'); markFieldError('birthYear'); }
-  if(!monthSel.value){ errors.push('請選擇出生月份'); markFieldError('birthMonth'); }
-  if(!document.getElementById('birthDay').value){ errors.push('請選擇出生日期'); markFieldError('birthDay'); }
-  if(document.getElementById('birthYear').value && monthSel.value && document.getElementById('birthDay').value && !lunarRes){
-    errors.push('生日日期無效，請重新確認');
-    markFieldError('birthYear'); markFieldError('birthMonth'); markFieldError('birthDay');
-  }
-  const anyChecked = checkItems.some(n => checkedState[n]);
-  if(!anyChecked) errors.push('請至少勾選一項事項');
-  if(!abbotCode){ errors.push('請輸入住持代號'); markFieldError('abbotCode'); }
+  return { errors, abbotCode };
+}
 
+function showError(errors){
   const banner = document.getElementById('errorBanner');
   if(errors.length){
     banner.innerHTML = '<b>請完成以下項目：</b><br>' + errors.join('、');
     banner.classList.add('show');
     banner.scrollIntoView({behavior:'smooth', block:'start'});
-    return;
+    return false;
   }
   banner.classList.remove('show');
-
-  // 組成輸出文字
-  const selectedItems = checkItems.filter(n => checkedState[n] && n !== '一套');
-  const finalItems = checkedState['一套'] ? ['一套', ...selectedItems] : selectedItems;
-  const itemsStr = finalItems.join('，');
-
-  const line1 = `${name} ${selectedGender} ${lunarRes.output}`;
-  const line2Plain = `${itemsStr}！${abbotCode}`;
-
-  document.getElementById('resLine1').textContent = line1;
-  document.getElementById('resLine2').innerHTML = escapeHtml(itemsStr) + '！<span class="abbot">' + escapeHtml(abbotCode) + '</span>';
-
-  document.getElementById('formArea').style.display = 'none';
-  document.getElementById('resultWrap').classList.add('show');
-  document.getElementById('resultWrap').dataset.fulltext = line1 + '\n' + line2Plain;
-  document.getElementById('resultWrap').scrollIntoView({behavior:'smooth', block:'start'});
-});
-
-function escapeHtml(s){
-  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  return true;
 }
 
-document.getElementById('editBtn').addEventListener('click', ()=>{
+function hideAllAreas(){
+  document.getElementById('formArea').style.display = 'none';
+  document.getElementById('yuanShaArea').style.display = 'none';
   document.getElementById('resultWrap').classList.remove('show');
+}
+
+/* ===================== 冤殺對卸分組 ===================== */
+function getAssignedDevoteeIds(){
+  const ids = new Set();
+  pairGroups.forEach(g => g.memberIds.forEach(id => ids.add(id)));
+  return ids;
+}
+
+function getUnassignedDevotees(){
+  const assigned = getAssignedDevoteeIds();
+  return devotees.filter(d => !assigned.has(d.id));
+}
+
+function renderGroups(){
+  const container = document.getElementById('groupsContainer');
+  container.innerHTML = '';
+
+  pairGroups.forEach((group, gi)=>{
+    const card = document.createElement('div');
+    card.className = 'group-card';
+    card.dataset.groupId = group.id;
+
+    const members = group.memberIds.map(id => devotees.find(d => d.id === id)).filter(Boolean);
+    const chipsHtml = members.length
+      ? members.map(d => `<span class="member-chip">${escapeHtml(d.name || '（未命名）')} ${d.gender || ''} <button type="button" class="chip-remove" data-remove-member="${group.id}" data-devotee="${d.id}">×</button></span>`).join('')
+      : '<span class="member-chip empty-hint">尚未加入香客</span>';
+
+    const unassigned = getUnassignedDevotees();
+    const pickHtml = unassigned.length
+      ? unassigned.map(d => {
+          const tag = hasYuanOrSha(d) ? '<span class="tag">冤／殺</span>' : '';
+          return `<label class="pick-item${hasYuanOrSha(d)?' yuansha-tag':''}"><input type="checkbox" data-pick="${group.id}" data-devotee="${d.id}"><span>${escapeHtml(d.name || '（未命名）')} ${d.gender || ''} ${d.lunarRes ? d.lunarRes.output : ''}</span>${tag}</label>`;
+        }).join('')
+      : '<div class="hint">所有香客已分配完畢</div>';
+
+    card.innerHTML = `
+      <div class="group-header">
+        <span class="group-title">對卸組 ${gi + 1}</span>
+        ${pairGroups.length > 1 ? `<button type="button" class="group-remove-btn" data-remove-group="${group.id}">移除此組</button>` : ''}
+      </div>
+      <div class="member-chips">${chipsHtml}</div>
+      <div class="hint" style="margin-bottom:8px;">從現有香客加入：</div>
+      <div class="pick-list">${pickHtml}</div>
+      <button type="button" class="inline-add-btn" data-toggle-add="${group.id}">＋ 新增對卸香客至此組</button>
+      <div class="inline-add-form" data-add-form="${group.id}">
+        <div class="field" style="margin-bottom:12px;">
+          <label class="field-label">姓名<span class="req">＊</span></label>
+          <input type="text" data-inline-name="${group.id}" placeholder="請輸入姓名" maxlength="20">
+        </div>
+        <div class="field" style="margin-bottom:12px;">
+          <label class="field-label">性別<span class="req">＊</span></label>
+          <div class="gender-row" data-inline-gender="${group.id}">
+            <div class="gender-btn" data-inline-g="男" data-gid="${group.id}">男</div>
+            <div class="gender-btn" data-inline-g="女" data-gid="${group.id}">女</div>
+          </div>
+        </div>
+        <div class="field" style="margin-bottom:12px;">
+          <label class="field-label">國曆生日（民國年）<span class="req">＊</span></label>
+          <div class="date-row">
+            <div class="field-wrap"><input type="text" data-inline-year="${group.id}" inputmode="numeric" placeholder="民國年" maxlength="3"><span class="unit">民國年</span></div>
+            <div class="field-wrap"><select data-inline-month="${group.id}"><option value="">月</option>${Array.from({length:12},(_,i)=>`<option value="${i+1}">${i+1} 月</option>`).join('')}</select><span class="unit">月</span></div>
+            <div class="field-wrap"><select data-inline-day="${group.id}"><option value="">日</option></select><span class="unit">日</span></div>
+          </div>
+        </div>
+        <div class="field">
+          <label class="field-label">事項勾選<span class="req">＊</span></label>
+          <div class="check-grid" data-inline-check="${group.id}"></div>
+        </div>
+        <button type="button" class="secondary-btn" data-inline-submit="${group.id}" style="margin-top:12px;">加入此組</button>
+      </div>
+    `;
+
+    container.appendChild(card);
+
+    card.querySelectorAll('[data-remove-member]').forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        const g = pairGroups.find(x => x.id === btn.dataset.removeMember);
+        if(g) g.memberIds = g.memberIds.filter(id => id !== btn.dataset.devotee);
+        renderGroups();
+      });
+    });
+
+    card.querySelectorAll('[data-pick]').forEach(cb=>{
+      cb.addEventListener('change', ()=>{
+        const g = pairGroups.find(x => x.id === cb.dataset.pick);
+        if(!g) return;
+        if(cb.checked) g.memberIds.push(cb.dataset.devotee);
+        else g.memberIds = g.memberIds.filter(id => id !== cb.dataset.devotee);
+        renderGroups();
+      });
+    });
+
+    const toggleBtn = card.querySelector(`[data-toggle-add="${group.id}"]`);
+    const addForm = card.querySelector(`[data-add-form="${group.id}"]`);
+    toggleBtn.addEventListener('click', ()=> addForm.classList.toggle('show'));
+
+    const inlineGender = {};
+    card.querySelectorAll('[data-inline-g]').forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        card.querySelectorAll(`[data-inline-gender="${group.id}"] .gender-btn`).forEach(b=>b.classList.remove('active'));
+        btn.classList.add('active');
+        inlineGender[group.id] = btn.dataset.inlineG;
+      });
+    });
+
+    const inlineItems = {};
+    checkItems.forEach(n => inlineItems[n] = false);
+    const inlineGrid = card.querySelector(`[data-inline-check="${group.id}"]`);
+    checkItems.forEach(name=>{
+      const div = document.createElement('div');
+      div.className = 'chk' + (name === '一套' ? ' set-main' : '');
+      div.textContent = name;
+      div.dataset.name = name;
+      div.addEventListener('click', ()=>{
+        if(div.classList.contains('disabled')) return;
+        inlineItems[name] = !inlineItems[name];
+        div.classList.toggle('checked', inlineItems[name]);
+        if(name === '一套'){
+          const isSet = inlineItems['一套'];
+          lockedBySet.forEach(n=>{
+            const el = inlineGrid.querySelector(`[data-name="${n}"]`);
+            if(isSet){ inlineItems[n]=false; el.classList.remove('checked'); el.classList.add('disabled'); }
+            else el.classList.remove('disabled');
+          });
+        }
+      });
+      inlineGrid.appendChild(div);
+    });
+
+    const yearInput = card.querySelector(`[data-inline-year="${group.id}"]`);
+    const monthSel = card.querySelector(`[data-inline-month="${group.id}"]`);
+    const daySel = card.querySelector(`[data-inline-day="${group.id}"]`);
+    const updateInlineDays = ()=>{
+      populateDayOptions(daySel, parseInt(yearInput.value,10), parseInt(monthSel.value,10), daySel.value);
+    };
+    yearInput.addEventListener('input', updateInlineDays);
+    monthSel.addEventListener('change', updateInlineDays);
+
+    card.querySelector(`[data-inline-submit="${group.id}"]`).addEventListener('click', ()=>{
+      const name = card.querySelector(`[data-inline-name="${group.id}"]`).value.trim();
+      const gender = inlineGender[group.id];
+      const birthYear = yearInput.value;
+      const birthMonth = monthSel.value;
+      const birthDay = daySel.value;
+      const lunarRes = calcLunar(parseInt(birthYear,10), parseInt(birthMonth,10), parseInt(birthDay,10));
+      const errs = [];
+      if(!name) errs.push('請輸入姓名');
+      if(!gender) errs.push('請選擇性別');
+      if(!birthYear || !birthMonth || !birthDay) errs.push('請輸入完整生日');
+      if(birthYear && birthMonth && birthDay && !lunarRes) errs.push('生日日期無效');
+      if(!checkItems.some(n => inlineItems[n])) errs.push('請至少勾選一項事項');
+      if(errs.length){ showError(errs); return; }
+
+      const newDev = {
+        id: 'd' + (++devoteeIdCounter),
+        name, gender,
+        birthYear, birthMonth, birthDay,
+        items: {...inlineItems},
+        lunarRes,
+        isPairOnly: true
+      };
+      devotees.push(newDev);
+      const g = pairGroups.find(x => x.id === group.id);
+      if(g) g.memberIds.push(newDev.id);
+      addForm.classList.remove('show');
+      renderGroups();
+    });
+
+    if(pairGroups.length > 1){
+      card.querySelector(`[data-remove-group="${group.id}"]`)?.addEventListener('click', ()=>{
+        pairGroups = pairGroups.filter(g => g.id !== group.id);
+        renderGroups();
+      });
+    }
+  });
+}
+
+function initYuanShaStep(abbotCode){
+  const yuanShaDevs = devotees.filter(hasYuanOrSha);
+  document.getElementById('yuanShaDesc').textContent =
+    `以下 ${yuanShaDevs.length} 位香客勾選了冤或殺事項：${yuanShaDevs.map(d => d.name || '（未命名）').join('、')}。請確認是否需要冤殺對卸。`;
+
+  yuanShaChoice = null;
+  document.getElementById('yuanShaYes').classList.remove('active');
+  document.getElementById('yuanShaNo').classList.remove('active');
+  document.getElementById('groupBuilder').style.display = 'none';
+  pairGroups = [{ id: 'g1', memberIds: yuanShaDevs.map(d => d.id) }];
+  pendingValidated = { abbotCode };
+}
+
+function setYuanShaChoice(choice){
+  yuanShaChoice = choice;
+  document.getElementById('yuanShaYes').classList.toggle('active', choice === 'yes');
+  document.getElementById('yuanShaNo').classList.toggle('active', choice === 'no');
+  const builder = document.getElementById('groupBuilder');
+  if(choice === 'yes'){
+    builder.style.display = 'block';
+    renderGroups();
+  } else {
+    builder.style.display = 'none';
+  }
+}
+
+function validateYuanShaGroups(){
+  if(yuanShaChoice !== 'yes') return [];
+  const errors = [];
+  const yuanShaDevs = devotees.filter(hasYuanOrSha);
+
+  pairGroups.forEach((g, i)=>{
+    if(g.memberIds.length < 2) errors.push(`對卸組 ${i + 1}：冤殺對卸至少需要 2 位香客`);
+  });
+
+  const assigned = getAssignedDevoteeIds();
+  yuanShaDevs.forEach((d, i)=>{
+    if(!assigned.has(d.id)){
+      const idx = devotees.indexOf(d) + 1;
+      errors.push(`香客 ${idx}（${d.name}）有冤／殺事項，請加入對卸組`);
+    }
+  });
+
+  const seen = new Set();
+  pairGroups.forEach(g => g.memberIds.forEach(id => {
+    if(seen.has(id)) errors.push('同一香客不可重複加入多個對卸組');
+    seen.add(id);
+  }));
+
+  return errors;
+}
+
+function buildOutputGroups(abbotCode){
+  if(yuanShaChoice !== 'yes'){
+    return devotees.map(d => ({ devotees: [d], isPair: false }));
+  }
+
+  const groups = [];
+  const used = new Set();
+
+  pairGroups.forEach((g, i)=>{
+    const members = g.memberIds.map(id => devotees.find(d => d.id === id)).filter(Boolean);
+    members.forEach(d => used.add(d.id));
+    if(members.length) groups.push({ devotees: members, isPair: true, label: `冤殺對卸組 ${i + 1}` });
+  });
+
+  devotees.forEach((d, i)=>{
+    if(!used.has(d.id)) groups.push({ devotees: [d], isPair: false, label: `香客 ${i + 1}` });
+  });
+
+  return groups;
+}
+
+function generateDocument(abbotCode){
+  const outputGroups = buildOutputGroups(abbotCode);
+  const resultContainer = document.getElementById('resultGroups');
+  resultContainer.innerHTML = '';
+  const fullTextParts = [];
+
+  outputGroups.forEach((group, gi)=>{
+    const line1Parts = group.devotees.map(d => `${d.name} ${d.gender} ${d.lunarRes.output}`);
+    const line1 = line1Parts.join('　');
+    const items = mergeItems(group.devotees);
+    const itemsStr = items.join('，');
+    const line2Plain = `${itemsStr}！${abbotCode}`;
+
+    fullTextParts.push(line1 + '\n' + line2Plain);
+
+    const block = document.createElement('div');
+    block.className = 'result-group';
+    const label = group.isPair ? group.label : (outputGroups.length > 1 ? `第 ${gi + 1} 組` : '');
+    block.innerHTML = `
+      ${label ? `<div class="result-group-label">${escapeHtml(label)}</div>` : ''}
+      <div class="result-card">
+        <div class="result-line1">${line1Parts.map(escapeHtml).join('<span class="devotee-sep">　</span>')}</div>
+        <div class="result-line2">${escapeHtml(itemsStr)}！<span class="abbot">${escapeHtml(abbotCode)}</span></div>
+      </div>
+    `;
+    resultContainer.appendChild(block);
+  });
+
+  hideAllAreas();
+  document.getElementById('resultWrap').classList.add('show');
+  document.getElementById('resultWrap').dataset.fulltext = fullTextParts.join('\n\n');
+  document.getElementById('resultWrap').scrollIntoView({behavior:'smooth', block:'start'});
+}
+
+function escapeHtml(s){
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+function escapeAttr(s){
+  return String(s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;');
+}
+
+/* ===================== 事件綁定 ===================== */
+document.getElementById('addDevoteeBtn').addEventListener('click', ()=> addDevotee());
+document.getElementById('abbotCode').addEventListener('input', ()=> document.getElementById('abbotCode').classList.remove('err'));
+
+document.getElementById('submitBtn').addEventListener('click', ()=>{
+  const { errors, abbotCode } = validateAll();
+  if(!showError(errors)) return;
+
+  const hasYuanSha = devotees.some(hasYuanOrSha);
+  if(hasYuanSha){
+    hideAllAreas();
+    document.getElementById('yuanShaArea').style.display = 'block';
+    initYuanShaStep(abbotCode);
+    document.getElementById('yuanShaArea').scrollIntoView({behavior:'smooth', block:'start'});
+  } else {
+    generateDocument(abbotCode);
+  }
+});
+
+document.getElementById('yuanShaYes').addEventListener('click', ()=> setYuanShaChoice('yes'));
+document.getElementById('yuanShaNo').addEventListener('click', ()=> setYuanShaChoice('no'));
+
+document.getElementById('addGroupBtn').addEventListener('click', ()=>{
+  pairGroups.push({ id: 'g' + (pairGroups.length + 1) + Date.now(), memberIds: [] });
+  renderGroups();
+});
+
+document.getElementById('generateBtn').addEventListener('click', ()=>{
+  if(!pendingValidated) return;
+  const errors = [];
+  if(devotees.some(hasYuanOrSha) && !yuanShaChoice){
+    errors.push('請選擇是否需要冤殺對卸');
+  }
+  if(yuanShaChoice === 'yes') errors.push(...validateYuanShaGroups());
+  if(!showError(errors)) return;
+  generateDocument(pendingValidated.abbotCode);
+});
+
+document.getElementById('backToFormBtn').addEventListener('click', ()=>{
+  hideAllAreas();
   document.getElementById('formArea').style.display = 'block';
+  renderDevoteeList();
+  window.scrollTo({top:0, behavior:'smooth'});
+});
+
+document.getElementById('editBtn').addEventListener('click', ()=>{
+  hideAllAreas();
+  document.getElementById('formArea').style.display = 'block';
+  renderDevoteeList();
   window.scrollTo({top:0, behavior:'smooth'});
 });
 
@@ -729,7 +1391,9 @@ document.getElementById('lineShareBtn').addEventListener('click', ()=>{
   window.open(url, '_blank');
 });
 
-/* ===================== PWA Service Worker 註冊 ===================== */
+/* ===================== 初始化 ===================== */
+addDevotee();
+
 if('serviceWorker' in navigator){
   window.addEventListener('load', ()=>{
     navigator.serviceWorker.register('./sw.js').catch(()=>{});
