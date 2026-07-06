@@ -728,16 +728,70 @@ function hasDuixie(dev){
   return dev.items['冤'] && dev.items['殺'] && dev.items['對卸'];
 }
 
-function getSelectedItems(dev){
-  const selected = checkItems.filter(n => dev.items[n] && n !== '一套');
+function getSelectedItems(dev, excludeDuixie = false){
+  const selected = checkItems.filter(n => {
+    if(!dev.items[n] || n === '一套') return false;
+    if(excludeDuixie && n === '對卸') return false;
+    return true;
+  });
   return dev.items['一套'] ? ['一套', ...selected] : selected;
 }
 
-function formatDevoteeEntry(d, abbotCode){
-  const line1 = `${d.name} ${d.gender} ${d.lunarRes.output}`;
-  const itemsStr = getSelectedItems(d).join('，');
-  const line2Plain = `${itemsStr}！${abbotCode}`;
-  return { line1, itemsStr, line2Plain };
+function toChineseNumber(n){
+  const digits = ['零','一','二','三','四','五','六','七','八','九'];
+  if(n < 10) return digits[n];
+  if(n === 10) return '十';
+  if(n < 20) return '十' + digits[n % 10];
+  if(n < 100){
+    const tens = Math.floor(n / 10);
+    const ones = n % 10;
+    return digits[tens] + '十' + (ones ? digits[ones] : '');
+  }
+  return String(n);
+}
+
+function buildDocumentContent(abbotCode){
+  const duixieDevs = devotees.filter(hasDuixie);
+  const duixieIds = new Set(duixieDevs.map(d => d.id));
+  const nonDuixieDevs = devotees.filter(d => !duixieIds.has(d.id));
+  const blocks = [];
+
+  duixieDevs.forEach(d => {
+    blocks.push({
+      type: 'duixie-person',
+      line1: `${d.name} ${d.gender} ${d.lunarRes.output}`,
+      itemsStr: getSelectedItems(d, true).join('，')
+    });
+  });
+
+  if(duixieDevs.length >= 2){
+    blocks.push({
+      type: 'duixie-summary',
+      text: `${toChineseNumber(duixieDevs.length)}人對卸！${abbotCode}`,
+      abbotCode
+    });
+  }
+
+  nonDuixieDevs.forEach(d => {
+    const itemsStr = getSelectedItems(d).join('，');
+    blocks.push({
+      type: 'normal',
+      line1: `${d.name} ${d.gender} ${d.lunarRes.output}`,
+      itemsStr,
+      line2Plain: `${itemsStr}！${abbotCode}`,
+      abbotCode
+    });
+  });
+
+  return blocks;
+}
+
+function blocksToPlainText(blocks){
+  return blocks.map(b => {
+    if(b.type === 'duixie-person') return `${b.line1}\n${b.itemsStr}`;
+    if(b.type === 'duixie-summary') return b.text;
+    return `${b.line1}\n${b.line2Plain}`;
+  }).join('\n\n');
 }
 
 function calcLunar(rocY, m, d){
@@ -1066,42 +1120,43 @@ function validateDuixieGrouping(){
 }
 
 function generateDocument(abbotCode){
+  const blocks = buildDocumentContent(abbotCode);
   const resultContainer = document.getElementById('resultGroups');
   resultContainer.innerHTML = '';
-  const fullTextParts = [];
-  const duixieDevs = devotees.filter(hasDuixie);
 
   const wrapper = document.createElement('div');
   wrapper.className = 'result-group';
 
-  devotees.forEach(d => {
-    const { line1, itemsStr, line2Plain } = formatDevoteeEntry(d, abbotCode);
-    fullTextParts.push(line1 + '\n' + line2Plain);
-
+  blocks.forEach(b => {
     const card = document.createElement('div');
-    card.className = 'result-card';
-    card.innerHTML = `
-      <div class="result-line1">${escapeHtml(line1)}</div>
-      <div class="result-line2">${escapeHtml(itemsStr)}！<span class="abbot">${escapeHtml(abbotCode)}</span></div>
-    `;
+    card.className = 'result-card' + (b.type === 'duixie-summary' ? ' result-duixie-card' : '');
+
+    if(b.type === 'duixie-person'){
+      card.innerHTML = `
+        <div class="result-line1">${escapeHtml(b.line1)}</div>
+        <div class="result-line2">${escapeHtml(b.itemsStr)}</div>
+      `;
+    } else if(b.type === 'duixie-summary'){
+      const parts = b.text.split('！');
+      const abbot = parts.slice(1).join('！');
+      card.innerHTML = `
+        <div class="result-duixie-note">${escapeHtml(parts[0])}！<span class="abbot">${escapeHtml(abbot)}</span></div>
+      `;
+    } else {
+      card.innerHTML = `
+        <div class="result-line1">${escapeHtml(b.line1)}</div>
+        <div class="result-line2">${escapeHtml(b.itemsStr)}！<span class="abbot">${escapeHtml(b.abbotCode)}</span></div>
+      `;
+    }
+
     wrapper.appendChild(card);
   });
-
-  if(duixieDevs.length >= 2){
-    const duixieLine = `${duixieDevs.length}人對卸`;
-    fullTextParts.push(duixieLine);
-
-    const duixieCard = document.createElement('div');
-    duixieCard.className = 'result-card result-duixie-card';
-    duixieCard.innerHTML = `<div class="result-duixie-note">${escapeHtml(duixieLine)}</div>`;
-    wrapper.appendChild(duixieCard);
-  }
 
   resultContainer.appendChild(wrapper);
 
   hideAllAreas();
   document.getElementById('resultWrap').classList.add('show');
-  document.getElementById('resultWrap').dataset.fulltext = fullTextParts.join('\n\n');
+  document.getElementById('resultWrap').dataset.fulltext = blocksToPlainText(blocks);
   document.getElementById('resultWrap').scrollIntoView({behavior:'smooth', block:'start'});
 }
 
