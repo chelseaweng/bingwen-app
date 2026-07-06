@@ -224,6 +224,7 @@
     background:repeating-linear-gradient(45deg, #ece3d0, #ece3d0 4px, #e4d8bd 4px, #e4d8bd 8px);
   }
   .chk:active:not(.disabled){transform:scale(0.96);}
+  .chk.long-label{font-size:12px; letter-spacing:0;}
 
   .hint{
     font-size:11.5px;
@@ -604,24 +605,6 @@
     <button class="submit-btn" id="submitBtn">確　認　生　成</button>
   </div>
 
-  <div id="yuanShaArea" style="display:none;">
-    <div class="card">
-      <h2 class="step-title">冤殺對卸設定</h2>
-      <p class="step-desc" id="yuanShaDesc"></p>
-      <div class="choice-row">
-        <div class="choice-btn" data-choice="yes" id="yuanShaYes">需要冤殺對卸</div>
-        <div class="choice-btn" data-choice="no" id="yuanShaNo">不需要，各自獨立</div>
-      </div>
-      <div id="groupBuilder" style="display:none;">
-        <div class="hint" style="margin-bottom:14px;">請將需冤殺對卸的香客分至同一組。可從現有香客選取，或新增對卸香客。</div>
-        <div id="groupsContainer"></div>
-        <button class="add-btn" id="addGroupBtn" style="margin-top:4px;">＋ 新增對卸組</button>
-      </div>
-    </div>
-    <button class="submit-btn" id="generateBtn">確　認　生　成</button>
-    <button class="secondary-btn" id="backToFormBtn">返回修改香客資料</button>
-  </div>
-
   <div class="result-wrap" id="resultWrap">
     <div id="resultGroups"></div>
     <div class="result-actions">
@@ -709,23 +692,25 @@ function solarToLunar(y, m, d){
 function adYearToROC(y){ return y - 1911; }
 
 /* ===================== 常數與狀態 ===================== */
-const checkItems = ['一套','嬰','靈','好','辦','冤','殺','運','病','功','車','財','官','桃','解','O氏','求壽'];
+const checkItems = ['一套','嬰','靈','好','辦','冤','殺','對卸','運','病','功','車','財','官','桃','解','O氏祖先','求壽'];
 const lockedBySet = ['嬰','靈','好','辦'];
+const longLabelItems = ['O氏祖先'];
 let devoteeIdCounter = 0;
 let devotees = [];
-let yuanShaChoice = null;
-let pairGroups = [];
-let pendingValidated = null;
 
 function newDevoteeData(){
   const id = 'd' + (++devoteeIdCounter);
   const items = {};
   checkItems.forEach(n => items[n] = false);
-  return { id, name:'', gender:null, birthYear:'', birthMonth:'', birthDay:'', items, lunarRes:null, isPairOnly:false };
+  return { id, name:'', gender:null, birthYear:'', birthMonth:'', birthDay:'', items, lunarRes:null };
 }
 
-function hasYuanOrSha(dev){
-  return dev.items['冤'] || dev.items['殺'];
+function hasYuanAndSha(dev){
+  return dev.items['冤'] && dev.items['殺'];
+}
+
+function hasDuixie(dev){
+  return dev.items['冤'] && dev.items['殺'] && dev.items['對卸'];
 }
 
 function getSelectedItems(dev){
@@ -781,7 +766,7 @@ function buildCheckGrid(container, dev){
   checkItems.forEach(name => {
     if(dev.items[name] === undefined) dev.items[name] = false;
     const div = document.createElement('div');
-    div.className = 'chk' + (name === '一套' ? ' set-main' : '');
+    div.className = 'chk' + (name === '一套' ? ' set-main' : '') + (longLabelItems.includes(name) ? ' long-label' : '');
     div.textContent = name;
     div.dataset.name = name;
     if(dev.items[name]) div.classList.add('checked');
@@ -790,11 +775,13 @@ function buildCheckGrid(container, dev){
       dev.items[name] = !dev.items[name];
       div.classList.toggle('checked', dev.items[name]);
       if(name === '一套') applySetLock(container, dev);
+      if(name === '冤' || name === '殺' || name === '一套') applyDuixieLock(container, dev);
       updateDevoteeCardStyle(dev.id);
     });
     container.appendChild(div);
   });
   applySetLock(container, dev);
+  applyDuixieLock(container, dev);
 }
 
 function applySetLock(container, dev){
@@ -810,6 +797,19 @@ function applySetLock(container, dev){
       el.classList.remove('disabled');
     }
   });
+}
+
+function applyDuixieLock(container, dev){
+  const canDuixie = dev.items['冤'] && dev.items['殺'];
+  const el = container.querySelector('[data-name="對卸"]');
+  if(!el) return;
+  if(!canDuixie){
+    dev.items['對卸'] = false;
+    el.classList.remove('checked');
+    el.classList.add('disabled');
+  } else {
+    el.classList.remove('disabled');
+  }
 }
 
 function updateLunarPreviewForDev(dev){
@@ -831,20 +831,34 @@ function updateLunarPreviewForDev(dev){
 function updateDevoteeCardStyle(id){
   const card = document.querySelector(`[data-devotee-card="${id}"]`);
   const dev = devotees.find(d => d.id === id);
-  if(card && dev) card.classList.toggle('has-yuansha', hasYuanOrSha(dev));
+  if(!card || !dev) return;
+  card.classList.toggle('has-yuansha', hasDuixie(dev));
+  const badge = card.querySelector('.devotee-badge');
+  if(badge){
+    if(hasDuixie(dev)) badge.textContent = '冤殺對卸';
+    else if(hasYuanAndSha(dev)) badge.textContent = '冤／殺';
+    else badge.remove();
+  } else if(hasYuanAndSha(dev) || hasDuixie(dev)){
+    const titleWrap = card.querySelector('.devotee-header > div');
+    const span = document.createElement('span');
+    span.className = 'devotee-badge';
+    span.textContent = hasDuixie(dev) ? '冤殺對卸' : '冤／殺';
+    titleWrap.appendChild(span);
+  }
 }
 
 function renderDevoteeCard(dev, index){
   const card = document.createElement('div');
-  card.className = 'devotee-card' + (hasYuanOrSha(dev) ? ' has-yuansha' : '');
+  card.className = 'devotee-card' + (hasDuixie(dev) ? ' has-yuansha' : '');
   card.dataset.devoteeCard = dev.id;
 
-  const canRemove = devotees.length > 1 && !dev.isPairOnly;
+  const canRemove = devotees.length > 1;
+  const badgeText = hasDuixie(dev) ? '冤殺對卸' : (hasYuanAndSha(dev) ? '冤／殺' : '');
   card.innerHTML = `
     <div class="devotee-header">
       <div>
         <span class="devotee-title">香客 ${index + 1}</span>
-        ${hasYuanOrSha(dev) ? '<span class="devotee-badge">冤／殺</span>' : ''}
+        ${badgeText ? '<span class="devotee-badge">' + badgeText + '</span>' : ''}
       </div>
       ${canRemove ? '<button type="button" class="remove-devotee-btn" data-remove="' + dev.id + '">移除</button>' : ''}
     </div>
@@ -880,7 +894,7 @@ function renderDevoteeCard(dev, index){
     <div class="field">
       <label class="field-label">事項勾選（可複選）<span class="req">＊</span></label>
       <div class="check-grid" data-check-grid="${dev.id}"></div>
-      <div class="hint">＊勾選「一套」後，嬰、靈、好、辦 將自動鎖定無法勾選。</div>
+      <div class="hint">＊勾選「一套」後，嬰、靈、好、辦 將自動鎖定無法勾選。<br>＊「對卸」需同時勾選冤與殺後才可選取；勾選對卸的香客將合併為同一組稟文。</div>
     </div>
   `;
 
@@ -1025,261 +1039,38 @@ function showError(errors){
 
 function hideAllAreas(){
   document.getElementById('formArea').style.display = 'none';
-  document.getElementById('yuanShaArea').style.display = 'none';
   document.getElementById('resultWrap').classList.remove('show');
 }
 
-/* ===================== 冤殺對卸分組 ===================== */
-function getAssignedDevoteeIds(){
-  const ids = new Set();
-  pairGroups.forEach(g => g.memberIds.forEach(id => ids.add(id)));
-  return ids;
-}
-
-function getUnassignedDevotees(){
-  const assigned = getAssignedDevoteeIds();
-  return devotees.filter(d => !assigned.has(d.id));
-}
-
-function renderGroups(){
-  const container = document.getElementById('groupsContainer');
-  container.innerHTML = '';
-
-  pairGroups.forEach((group, gi)=>{
-    const card = document.createElement('div');
-    card.className = 'group-card';
-    card.dataset.groupId = group.id;
-
-    const members = group.memberIds.map(id => devotees.find(d => d.id === id)).filter(Boolean);
-    const chipsHtml = members.length
-      ? members.map(d => `<span class="member-chip">${escapeHtml(d.name || '（未命名）')} ${d.gender || ''} <button type="button" class="chip-remove" data-remove-member="${group.id}" data-devotee="${d.id}">×</button></span>`).join('')
-      : '<span class="member-chip empty-hint">尚未加入香客</span>';
-
-    const unassigned = getUnassignedDevotees();
-    const pickHtml = unassigned.length
-      ? unassigned.map(d => {
-          const tag = hasYuanOrSha(d) ? '<span class="tag">冤／殺</span>' : '';
-          return `<label class="pick-item${hasYuanOrSha(d)?' yuansha-tag':''}"><input type="checkbox" data-pick="${group.id}" data-devotee="${d.id}"><span>${escapeHtml(d.name || '（未命名）')} ${d.gender || ''} ${d.lunarRes ? d.lunarRes.output : ''}</span>${tag}</label>`;
-        }).join('')
-      : '<div class="hint">所有香客已分配完畢</div>';
-
-    card.innerHTML = `
-      <div class="group-header">
-        <span class="group-title">對卸組 ${gi + 1}</span>
-        ${pairGroups.length > 1 ? `<button type="button" class="group-remove-btn" data-remove-group="${group.id}">移除此組</button>` : ''}
-      </div>
-      <div class="member-chips">${chipsHtml}</div>
-      <div class="hint" style="margin-bottom:8px;">從現有香客加入：</div>
-      <div class="pick-list">${pickHtml}</div>
-      <button type="button" class="inline-add-btn" data-toggle-add="${group.id}">＋ 新增對卸香客至此組</button>
-      <div class="inline-add-form" data-add-form="${group.id}">
-        <div class="field" style="margin-bottom:12px;">
-          <label class="field-label">姓名<span class="req">＊</span></label>
-          <input type="text" data-inline-name="${group.id}" placeholder="請輸入姓名" maxlength="20">
-        </div>
-        <div class="field" style="margin-bottom:12px;">
-          <label class="field-label">性別<span class="req">＊</span></label>
-          <div class="gender-row" data-inline-gender="${group.id}">
-            <div class="gender-btn" data-inline-g="男" data-gid="${group.id}">男</div>
-            <div class="gender-btn" data-inline-g="女" data-gid="${group.id}">女</div>
-          </div>
-        </div>
-        <div class="field" style="margin-bottom:12px;">
-          <label class="field-label">國曆生日（民國年）<span class="req">＊</span></label>
-          <div class="date-row">
-            <div class="field-wrap"><input type="text" data-inline-year="${group.id}" inputmode="numeric" placeholder="民國年" maxlength="3"><span class="unit">民國年</span></div>
-            <div class="field-wrap"><select data-inline-month="${group.id}"><option value="">月</option>${Array.from({length:12},(_,i)=>`<option value="${i+1}">${i+1} 月</option>`).join('')}</select><span class="unit">月</span></div>
-            <div class="field-wrap"><select data-inline-day="${group.id}"><option value="">日</option></select><span class="unit">日</span></div>
-          </div>
-        </div>
-        <div class="field">
-          <label class="field-label">事項勾選<span class="req">＊</span></label>
-          <div class="check-grid" data-inline-check="${group.id}"></div>
-        </div>
-        <button type="button" class="secondary-btn" data-inline-submit="${group.id}" style="margin-top:12px;">加入此組</button>
-      </div>
-    `;
-
-    container.appendChild(card);
-
-    card.querySelectorAll('[data-remove-member]').forEach(btn=>{
-      btn.addEventListener('click', ()=>{
-        const g = pairGroups.find(x => x.id === btn.dataset.removeMember);
-        if(g) g.memberIds = g.memberIds.filter(id => id !== btn.dataset.devotee);
-        renderGroups();
-      });
-    });
-
-    card.querySelectorAll('[data-pick]').forEach(cb=>{
-      cb.addEventListener('change', ()=>{
-        const g = pairGroups.find(x => x.id === cb.dataset.pick);
-        if(!g) return;
-        if(cb.checked) g.memberIds.push(cb.dataset.devotee);
-        else g.memberIds = g.memberIds.filter(id => id !== cb.dataset.devotee);
-        renderGroups();
-      });
-    });
-
-    const toggleBtn = card.querySelector(`[data-toggle-add="${group.id}"]`);
-    const addForm = card.querySelector(`[data-add-form="${group.id}"]`);
-    toggleBtn.addEventListener('click', ()=> addForm.classList.toggle('show'));
-
-    const inlineGender = {};
-    card.querySelectorAll('[data-inline-g]').forEach(btn=>{
-      btn.addEventListener('click', ()=>{
-        card.querySelectorAll(`[data-inline-gender="${group.id}"] .gender-btn`).forEach(b=>b.classList.remove('active'));
-        btn.classList.add('active');
-        inlineGender[group.id] = btn.dataset.inlineG;
-      });
-    });
-
-    const inlineItems = {};
-    checkItems.forEach(n => inlineItems[n] = false);
-    const inlineGrid = card.querySelector(`[data-inline-check="${group.id}"]`);
-    checkItems.forEach(name=>{
-      const div = document.createElement('div');
-      div.className = 'chk' + (name === '一套' ? ' set-main' : '');
-      div.textContent = name;
-      div.dataset.name = name;
-      div.addEventListener('click', ()=>{
-        if(div.classList.contains('disabled')) return;
-        inlineItems[name] = !inlineItems[name];
-        div.classList.toggle('checked', inlineItems[name]);
-        if(name === '一套'){
-          const isSet = inlineItems['一套'];
-          lockedBySet.forEach(n=>{
-            const el = inlineGrid.querySelector(`[data-name="${n}"]`);
-            if(isSet){ inlineItems[n]=false; el.classList.remove('checked'); el.classList.add('disabled'); }
-            else el.classList.remove('disabled');
-          });
-        }
-      });
-      inlineGrid.appendChild(div);
-    });
-
-    const yearInput = card.querySelector(`[data-inline-year="${group.id}"]`);
-    const monthSel = card.querySelector(`[data-inline-month="${group.id}"]`);
-    const daySel = card.querySelector(`[data-inline-day="${group.id}"]`);
-    const updateInlineDays = ()=>{
-      populateDayOptions(daySel, parseInt(yearInput.value,10), parseInt(monthSel.value,10), daySel.value);
-    };
-    yearInput.addEventListener('input', updateInlineDays);
-    monthSel.addEventListener('change', updateInlineDays);
-
-    card.querySelector(`[data-inline-submit="${group.id}"]`).addEventListener('click', ()=>{
-      const name = card.querySelector(`[data-inline-name="${group.id}"]`).value.trim();
-      const gender = inlineGender[group.id];
-      const birthYear = yearInput.value;
-      const birthMonth = monthSel.value;
-      const birthDay = daySel.value;
-      const lunarRes = calcLunar(parseInt(birthYear,10), parseInt(birthMonth,10), parseInt(birthDay,10));
-      const errs = [];
-      if(!name) errs.push('請輸入姓名');
-      if(!gender) errs.push('請選擇性別');
-      if(!birthYear || !birthMonth || !birthDay) errs.push('請輸入完整生日');
-      if(birthYear && birthMonth && birthDay && !lunarRes) errs.push('生日日期無效');
-      if(!checkItems.some(n => inlineItems[n])) errs.push('請至少勾選一項事項');
-      if(errs.length){ showError(errs); return; }
-
-      const newDev = {
-        id: 'd' + (++devoteeIdCounter),
-        name, gender,
-        birthYear, birthMonth, birthDay,
-        items: {...inlineItems},
-        lunarRes,
-        isPairOnly: true
-      };
-      devotees.push(newDev);
-      const g = pairGroups.find(x => x.id === group.id);
-      if(g) g.memberIds.push(newDev.id);
-      addForm.classList.remove('show');
-      renderGroups();
-    });
-
-    if(pairGroups.length > 1){
-      card.querySelector(`[data-remove-group="${group.id}"]`)?.addEventListener('click', ()=>{
-        pairGroups = pairGroups.filter(g => g.id !== group.id);
-        renderGroups();
-      });
-    }
-  });
-}
-
-function initYuanShaStep(abbotCode){
-  const yuanShaDevs = devotees.filter(hasYuanOrSha);
-  document.getElementById('yuanShaDesc').textContent =
-    `以下 ${yuanShaDevs.length} 位香客勾選了冤或殺事項：${yuanShaDevs.map(d => d.name || '（未命名）').join('、')}。請確認是否需要冤殺對卸。`;
-
-  yuanShaChoice = null;
-  document.getElementById('yuanShaYes').classList.remove('active');
-  document.getElementById('yuanShaNo').classList.remove('active');
-  document.getElementById('groupBuilder').style.display = 'none';
-  pairGroups = [{ id: 'g1', memberIds: yuanShaDevs.map(d => d.id) }];
-  pendingValidated = { abbotCode };
-}
-
-function setYuanShaChoice(choice){
-  yuanShaChoice = choice;
-  document.getElementById('yuanShaYes').classList.toggle('active', choice === 'yes');
-  document.getElementById('yuanShaNo').classList.toggle('active', choice === 'no');
-  const builder = document.getElementById('groupBuilder');
-  if(choice === 'yes'){
-    builder.style.display = 'block';
-    renderGroups();
-  } else {
-    builder.style.display = 'none';
+function validateDuixieGrouping(){
+  const duixieDevs = devotees.filter(hasDuixie);
+  if(duixieDevs.length === 1){
+    const idx = devotees.indexOf(duixieDevs[0]) + 1;
+    return [`香客 ${idx}（${duixieDevs[0].name}）勾選對卸，至少需要 2 位香客同時勾選冤、殺與對卸`];
   }
+  return [];
 }
 
-function validateYuanShaGroups(){
-  if(yuanShaChoice !== 'yes') return [];
-  const errors = [];
-  const yuanShaDevs = devotees.filter(hasYuanOrSha);
-
-  pairGroups.forEach((g, i)=>{
-    if(g.memberIds.length < 2) errors.push(`對卸組 ${i + 1}：冤殺對卸至少需要 2 位香客`);
-  });
-
-  const assigned = getAssignedDevoteeIds();
-  yuanShaDevs.forEach((d, i)=>{
-    if(!assigned.has(d.id)){
-      const idx = devotees.indexOf(d) + 1;
-      errors.push(`香客 ${idx}（${d.name}）有冤／殺事項，請加入對卸組`);
-    }
-  });
-
-  const seen = new Set();
-  pairGroups.forEach(g => g.memberIds.forEach(id => {
-    if(seen.has(id)) errors.push('同一香客不可重複加入多個對卸組');
-    seen.add(id);
-  }));
-
-  return errors;
-}
-
-function buildOutputGroups(abbotCode){
-  if(yuanShaChoice !== 'yes'){
-    return devotees.map(d => ({ devotees: [d], isPair: false }));
-  }
-
+function buildOutputGroups(){
   const groups = [];
-  const used = new Set();
+  const duixieDevs = devotees.filter(hasDuixie);
+  const duixieIds = new Set(duixieDevs.map(d => d.id));
 
-  pairGroups.forEach((g, i)=>{
-    const members = g.memberIds.map(id => devotees.find(d => d.id === id)).filter(Boolean);
-    members.forEach(d => used.add(d.id));
-    if(members.length) groups.push({ devotees: members, isPair: true, label: `冤殺對卸組 ${i + 1}` });
-  });
+  if(duixieDevs.length >= 2){
+    groups.push({ devotees: duixieDevs, isPair: true, label: '冤殺對卸組' });
+  }
 
   devotees.forEach((d, i)=>{
-    if(!used.has(d.id)) groups.push({ devotees: [d], isPair: false, label: `香客 ${i + 1}` });
+    if(!duixieIds.has(d.id)){
+      groups.push({ devotees: [d], isPair: false, label: devotees.length > 1 ? `第 ${groups.length + 1} 組` : '' });
+    }
   });
 
   return groups;
 }
 
 function generateDocument(abbotCode){
-  const outputGroups = buildOutputGroups(abbotCode);
+  const outputGroups = buildOutputGroups();
   const resultContainer = document.getElementById('resultGroups');
   resultContainer.innerHTML = '';
   const fullTextParts = [];
@@ -1325,43 +1116,9 @@ document.getElementById('abbotCode').addEventListener('input', ()=> document.get
 
 document.getElementById('submitBtn').addEventListener('click', ()=>{
   const { errors, abbotCode } = validateAll();
+  errors.push(...validateDuixieGrouping());
   if(!showError(errors)) return;
-
-  const hasYuanSha = devotees.some(hasYuanOrSha);
-  if(hasYuanSha){
-    hideAllAreas();
-    document.getElementById('yuanShaArea').style.display = 'block';
-    initYuanShaStep(abbotCode);
-    document.getElementById('yuanShaArea').scrollIntoView({behavior:'smooth', block:'start'});
-  } else {
-    generateDocument(abbotCode);
-  }
-});
-
-document.getElementById('yuanShaYes').addEventListener('click', ()=> setYuanShaChoice('yes'));
-document.getElementById('yuanShaNo').addEventListener('click', ()=> setYuanShaChoice('no'));
-
-document.getElementById('addGroupBtn').addEventListener('click', ()=>{
-  pairGroups.push({ id: 'g' + (pairGroups.length + 1) + Date.now(), memberIds: [] });
-  renderGroups();
-});
-
-document.getElementById('generateBtn').addEventListener('click', ()=>{
-  if(!pendingValidated) return;
-  const errors = [];
-  if(devotees.some(hasYuanOrSha) && !yuanShaChoice){
-    errors.push('請選擇是否需要冤殺對卸');
-  }
-  if(yuanShaChoice === 'yes') errors.push(...validateYuanShaGroups());
-  if(!showError(errors)) return;
-  generateDocument(pendingValidated.abbotCode);
-});
-
-document.getElementById('backToFormBtn').addEventListener('click', ()=>{
-  hideAllAreas();
-  document.getElementById('formArea').style.display = 'block';
-  renderDevoteeList();
-  window.scrollTo({top:0, behavior:'smooth'});
+  generateDocument(abbotCode);
 });
 
 document.getElementById('editBtn').addEventListener('click', ()=>{
