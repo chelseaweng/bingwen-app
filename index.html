@@ -505,6 +505,21 @@
     position:relative;
     overflow:hidden;
   }
+  .result-card + .result-card{
+    margin-top:12px;
+  }
+  .result-duixie-card{
+    border-color:var(--seal);
+    background:rgba(142,42,35,0.04);
+  }
+  .result-duixie-note{
+    font-family:'Noto Serif TC', serif;
+    font-size:17px;
+    font-weight:700;
+    color:var(--seal-deep);
+    letter-spacing:0.06em;
+    text-align:center;
+  }
   .result-line1{
     font-family:'Noto Serif TC', serif;
     font-size:19px;
@@ -718,12 +733,11 @@ function getSelectedItems(dev){
   return dev.items['一套'] ? ['一套', ...selected] : selected;
 }
 
-function mergeItems(devs){
-  const merged = {};
-  checkItems.forEach(n => merged[n] = false);
-  devs.forEach(d => checkItems.forEach(n => { if(d.items[n]) merged[n] = true; }));
-  const selected = checkItems.filter(n => merged[n] && n !== '一套');
-  return merged['一套'] ? ['一套', ...selected] : selected;
+function formatDevoteeEntry(d, abbotCode){
+  const line1 = `${d.name} ${d.gender} ${d.lunarRes.output}`;
+  const itemsStr = getSelectedItems(d).join('，');
+  const line2Plain = `${itemsStr}！${abbotCode}`;
+  return { line1, itemsStr, line2Plain };
 }
 
 function calcLunar(rocY, m, d){
@@ -1051,51 +1065,40 @@ function validateDuixieGrouping(){
   return [];
 }
 
-function buildOutputGroups(){
-  const groups = [];
-  const duixieDevs = devotees.filter(hasDuixie);
-  const duixieIds = new Set(duixieDevs.map(d => d.id));
-
-  if(duixieDevs.length >= 2){
-    groups.push({ devotees: duixieDevs, isPair: true, label: '冤殺對卸組' });
-  }
-
-  devotees.forEach((d, i)=>{
-    if(!duixieIds.has(d.id)){
-      groups.push({ devotees: [d], isPair: false, label: devotees.length > 1 ? `第 ${groups.length + 1} 組` : '' });
-    }
-  });
-
-  return groups;
-}
-
 function generateDocument(abbotCode){
-  const outputGroups = buildOutputGroups();
   const resultContainer = document.getElementById('resultGroups');
   resultContainer.innerHTML = '';
   const fullTextParts = [];
+  const duixieDevs = devotees.filter(hasDuixie);
 
-  outputGroups.forEach((group, gi)=>{
-    const line1Parts = group.devotees.map(d => `${d.name} ${d.gender} ${d.lunarRes.output}`);
-    const line1 = line1Parts.join('　');
-    const items = mergeItems(group.devotees);
-    const itemsStr = items.join('，');
-    const line2Plain = `${itemsStr}！${abbotCode}`;
+  const wrapper = document.createElement('div');
+  wrapper.className = 'result-group';
 
+  devotees.forEach(d => {
+    const { line1, itemsStr, line2Plain } = formatDevoteeEntry(d, abbotCode);
     fullTextParts.push(line1 + '\n' + line2Plain);
 
-    const block = document.createElement('div');
-    block.className = 'result-group';
-    const label = group.isPair ? group.label : (outputGroups.length > 1 ? `第 ${gi + 1} 組` : '');
-    block.innerHTML = `
-      ${label ? `<div class="result-group-label">${escapeHtml(label)}</div>` : ''}
-      <div class="result-card">
-        <div class="result-line1">${line1Parts.map(escapeHtml).join('<span class="devotee-sep">　</span>')}</div>
-        <div class="result-line2">${escapeHtml(itemsStr)}！<span class="abbot">${escapeHtml(abbotCode)}</span></div>
-      </div>
+    const card = document.createElement('div');
+    card.className = 'result-card';
+    card.innerHTML = `
+      <div class="result-line1">${escapeHtml(line1)}</div>
+      <div class="result-line2">${escapeHtml(itemsStr)}！<span class="abbot">${escapeHtml(abbotCode)}</span></div>
     `;
-    resultContainer.appendChild(block);
+    wrapper.appendChild(card);
   });
+
+  if(duixieDevs.length >= 2){
+    const names = duixieDevs.map(d => d.name).join('、');
+    const duixieLine = `冤殺對卸：${names}`;
+    fullTextParts.push(duixieLine);
+
+    const duixieCard = document.createElement('div');
+    duixieCard.className = 'result-card result-duixie-card';
+    duixieCard.innerHTML = `<div class="result-duixie-note">${escapeHtml(duixieLine)}</div>`;
+    wrapper.appendChild(duixieCard);
+  }
+
+  resultContainer.appendChild(wrapper);
 
   hideAllAreas();
   document.getElementById('resultWrap').classList.add('show');
