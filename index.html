@@ -1151,10 +1151,14 @@ document.getElementById('lineShareBtn').addEventListener('click', ()=>{
 /* ===================== 初始化 ===================== */
 addDevotee();
 
-if('serviceWorker' in navigator){
+const isLocalhost = ['localhost', '127.0.0.1'].includes(location.hostname);
+if('serviceWorker' in navigator && !isLocalhost){
   window.addEventListener('load', ()=>{
     navigator.serviceWorker.register('./sw.js').catch(()=>{});
   });
+} else if(isLocalhost && 'serviceWorker' in navigator){
+  navigator.serviceWorker.getRegistrations().then(regs => regs.forEach(r => r.unregister()));
+  caches.keys().then(keys => keys.forEach(k => caches.delete(k)));
 }
 </script>
 </body>
