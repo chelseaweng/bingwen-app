@@ -610,13 +610,6 @@
     <div id="devoteeList"></div>
     <button class="add-btn" id="addDevoteeBtn">＋ 新增香客</button>
 
-    <div class="card">
-      <div class="field">
-        <label class="field-label">住持代號<span class="req">＊</span></label>
-        <input type="text" id="abbotCode" placeholder="請輸入住持代號" maxlength="10">
-      </div>
-    </div>
-
     <button class="submit-btn" id="submitBtn">確　認　生　成</button>
   </div>
 
@@ -717,7 +710,7 @@ function newDevoteeData(){
   const id = 'd' + (++devoteeIdCounter);
   const items = {};
   checkItems.forEach(n => items[n] = false);
-  return { id, name:'', gender:null, birthYear:'', birthMonth:'', birthDay:'', items, lunarRes:null };
+  return { id, name:'', gender:null, birthYear:'', birthMonth:'', birthDay:'', items, lunarRes:null, abbotCode:'' };
 }
 
 function hasYuanAndSha(dev){
@@ -750,7 +743,21 @@ function toChineseNumber(n){
   return String(n);
 }
 
-function buildDocumentContent(abbotCode){
+function resolveAbbotCodes(){
+  devotees.forEach(d => readDevoteeFromDOM(d));
+  let lastFilledInList = '';
+  devotees.forEach(d => {
+    const raw = (d.abbotCode || '').trim();
+    if(raw) lastFilledInList = raw;
+  });
+  devotees.forEach(d => {
+    const raw = (d.abbotCode || '').trim();
+    d.resolvedAbbotCode = raw || lastFilledInList;
+  });
+}
+
+function buildDocumentContent(){
+  resolveAbbotCodes();
   const duixieDevs = devotees.filter(hasDuixie);
   const duixieIds = new Set(duixieDevs.map(d => d.id));
   const nonDuixieDevs = devotees.filter(d => !duixieIds.has(d.id));
@@ -765,15 +772,17 @@ function buildDocumentContent(abbotCode){
   });
 
   if(duixieDevs.length >= 2){
+    const summaryAbbot = duixieDevs[duixieDevs.length - 1].resolvedAbbotCode;
     blocks.push({
       type: 'duixie-summary',
-      text: `${toChineseNumber(duixieDevs.length)}人對卸！${abbotCode}`,
-      abbotCode
+      text: `${toChineseNumber(duixieDevs.length)}人對卸！${summaryAbbot}`,
+      abbotCode: summaryAbbot
     });
   }
 
   nonDuixieDevs.forEach(d => {
     const itemsStr = getSelectedItems(d).join('，');
+    const abbotCode = d.resolvedAbbotCode;
     blocks.push({
       type: 'normal',
       line1: `${d.name} ${d.gender} ${d.lunarRes.output}`,
@@ -964,6 +973,11 @@ function renderDevoteeCard(dev, index){
       <div class="check-grid" data-check-grid="${dev.id}"></div>
       <div class="hint">＊勾選「一套」後，嬰、靈、好、辦 將自動鎖定無法勾選。<br>＊「對卸」需同時勾選冤與殺後才可選取；勾選對卸的香客將合併為同一組稟文。</div>
     </div>
+    <div class="field">
+      <label class="field-label">住持代號</label>
+      <input type="text" data-field="abbotCode" data-id="${dev.id}" placeholder="可不填，沿用列表中最後一位有填寫者" maxlength="10" value="${escapeAttr(dev.abbotCode || '')}">
+      <div class="hint">可不填寫；若留空，將採用列表中最後一位有填寫的住持代號。</div>
+    </div>
   `;
 
   const monthSel = card.querySelector('[data-field="birthMonth"]');
@@ -1047,6 +1061,7 @@ function readDevoteeFromDOM(dev){
   dev.birthYear = card.querySelector('[data-field="birthYear"]')?.value || '';
   dev.birthMonth = card.querySelector('[data-field="birthMonth"]')?.value || '';
   dev.birthDay = card.querySelector('[data-field="birthDay"]')?.value || '';
+  dev.abbotCode = (card.querySelector('[data-field="abbotCode"]')?.value || '').trim();
   const rocY = parseInt(dev.birthYear, 10);
   const m = parseInt(dev.birthMonth, 10);
   const d = parseInt(dev.birthDay, 10);
@@ -1083,14 +1098,20 @@ function validateAll(){
   devotees.forEach(d => readDevoteeFromDOM(d));
   const errors = [];
   devotees.forEach((d, i) => errors.push(...validateDevotee(d, `香客 ${i + 1}`)));
-  const abbotCode = document.getElementById('abbotCode').value.trim();
-  if(!abbotCode){
-    errors.push('請輸入住持代號');
-    document.getElementById('abbotCode').classList.add('err');
+
+  const hasAnyAbbot = devotees.some(d => (d.abbotCode || '').trim());
+  if(!hasAnyAbbot){
+    errors.push('請至少於一位香客填寫住持代號');
+    devotees.forEach(d => {
+      document.querySelector(`[data-devotee-card="${d.id}"] [data-field="abbotCode"]`)?.classList.add('err');
+    });
   } else {
-    document.getElementById('abbotCode').classList.remove('err');
+    devotees.forEach(d => {
+      document.querySelector(`[data-devotee-card="${d.id}"] [data-field="abbotCode"]`)?.classList.remove('err');
+    });
   }
-  return { errors, abbotCode };
+
+  return { errors };
 }
 
 function showError(errors){
@@ -1119,8 +1140,8 @@ function validateDuixieGrouping(){
   return [];
 }
 
-function generateDocument(abbotCode){
-  const blocks = buildDocumentContent(abbotCode);
+function generateDocument(){
+  const blocks = buildDocumentContent();
   const resultContainer = document.getElementById('resultGroups');
   resultContainer.innerHTML = '';
 
@@ -1169,13 +1190,11 @@ function escapeAttr(s){
 
 /* ===================== 事件綁定 ===================== */
 document.getElementById('addDevoteeBtn').addEventListener('click', ()=> addDevotee());
-document.getElementById('abbotCode').addEventListener('input', ()=> document.getElementById('abbotCode').classList.remove('err'));
-
 document.getElementById('submitBtn').addEventListener('click', ()=>{
-  const { errors, abbotCode } = validateAll();
+  const { errors } = validateAll();
   errors.push(...validateDuixieGrouping());
   if(!showError(errors)) return;
-  generateDocument(abbotCode);
+  generateDocument();
 });
 
 document.getElementById('editBtn').addEventListener('click', ()=>{

@@ -1,4 +1,4 @@
-const CACHE_NAME = 'bingwen-v6';
+const CACHE_NAME = 'bingwen-v7';
 const ASSETS = [
   './',
   './index.html',
