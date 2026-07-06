@@ -1088,8 +1088,7 @@ function generateDocument(abbotCode){
   });
 
   if(duixieDevs.length >= 2){
-    const names = duixieDevs.map(d => d.name).join('、');
-    const duixieLine = `冤殺對卸：${names}`;
+    const duixieLine = `${duixieDevs.length}人對卸`;
     fullTextParts.push(duixieLine);
 
     const duixieCard = document.createElement('div');
